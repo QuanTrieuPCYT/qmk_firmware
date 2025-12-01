@@ -62,7 +62,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 void notify_usb_device_state_change_user(enum usb_device_state usb_device_state)  {
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
         if(usb_device_state == USB_DEVICE_STATE_CONFIGURED) {
-            Usb_If_Ok = true;//usb枚举完成
+            Usb_If_Ok = true; // usb enumeration complete
             Usb_If_Ok_Led = true;
             Usb_If_Ok_Delay = 0;
             Usb_Suspend_Sig = false;
@@ -100,8 +100,8 @@ void keyboard_post_init_user(void) {
     User_Keyboard_Post_Init();
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {   /*键盘只要有按键按下就会调用此函数*/
-    Usb_Change_Mode_Delay = 0;                                      /*只要有按键就不会进入休眠*/
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {   // process when user presses a key
+    Usb_Change_Mode_Delay = 0;                                      // restore rgb timeout
     Usb_Change_Mode_Wakeup = false;
 
     return Key_Value_Dispose(keycode, record);

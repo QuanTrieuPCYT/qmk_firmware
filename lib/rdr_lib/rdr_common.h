@@ -6,9 +6,9 @@
 #include "report.h"
 #include "action_util.h"
 
-/************************IO 口**************************/
-/************************IO 口**************************/
-/************************IO 口**************************/
+/************************ I/O Ports **************************/
+/************************ I/O Ports **************************/
+/************************ I/O Ports **************************/
 #define ES_BATT_ADC_IO      (C4)
 #define ES_BATT_STDBY_IO    (A13)
 #define ES_USB_POWER_IO     (C5)
@@ -20,9 +20,9 @@
 #define ES_LED_POWER_IO     (D0)
 
 
-/************************SPI 命令**************************/
-/************************SPI 命令**************************/
-/************************SPI 命令**************************/
+/************************ SPI Commands **************************/
+/************************ SPI Commands **************************/
+/************************ SPI Commands **************************/
 #define USER_EMI_COMMAND	    0XBB
 #define USER_KEYBOARD_COMMAND	0X0A
 #define USER_KEYBOARD_LENGTH    (64)
@@ -69,9 +69,9 @@
 #define LOGO_LED_ENABLE         (1)
 #define SIDE_LED_ENABLE         (0)
 
-/************************核心定义**************************/
-/************************核心定义**************************/
-/************************核心定义**************************/
+/************************ Core Definitions **************************/
+/************************ Core Definitions **************************/
+/************************ Core Definitions **************************/
 enum Custom_KeyModes {
     QMK_BLE_MODE = 0,
     QMK_2P4G_MODE,
@@ -101,42 +101,42 @@ enum Custom_Ble_24G_Status_S {
 };
 
 typedef enum {
-    KB_MODE_CONNECT_OK,  	        //连接成功
-    KB_MODE_CONNECT_PAIR,	        //配对
-    KB_MODE_CONNECT_RETURN,	        //回连
+    KB_MODE_CONNECT_OK,   	        // Connection successful
+    KB_MODE_CONNECT_PAIR,        	// Pairing
+    KB_MODE_CONNECT_RETURN,        	// Reconnected
 } keyboard_System_state_e;
 
 typedef enum {
-    USER_SLEEP_PASS,	            //休眠成功
-    USER_SLEEP_FIAL,	            //休眠失败
+    USER_SLEEP_PASS,	            // Sleep success
+    USER_SLEEP_FIAL,            	// Sleep failure
 } keyboard_System_Sleep_Status_s;
 
-/************************默认工作模式**************************/
-/************************默认工作模式**************************/
-/************************默认工作模式**************************/
-#define INIT_WORK_MODE          (QMK_USB_MODE)       // 默认工作模式
-#define INIT_BLE_CHANNEL        (QMK_BLE_CHANNEL_1)  // 默认蓝牙通道
-#define INIT_BATT_NUMBER        (50)                 // 上电的默认电池电量
+/************************ Default Work Modes **************************/
+/************************ Default Work Modes **************************/
+/************************ Default Work Modes **************************/
+#define INIT_WORK_MODE          (QMK_USB_MODE)       // Default work mode
+#define INIT_BLE_CHANNEL        (QMK_BLE_CHANNEL_1)  // Default Bluetooth channel
+#define INIT_BATT_NUMBER        (50)                 // Default battery percentage on power-up
 
-#define INIT_SIX_KEY            (0)                  // 六键
-#define INIT_ALL_KEY            (1)                  // 全键
-#define INIT_ALL_SIX_KEY        (INIT_ALL_KEY)       // 全键
+#define INIT_SIX_KEY            (0)                  // Six-key (6KRO)
+#define INIT_ALL_KEY            (1)                  // Full-key (NKRO)
+#define INIT_ALL_SIX_KEY        (INIT_ALL_KEY)       // Full-key (NKRO)
 
-#define INIT_WIN_MODE           (0)                  // Windows
-#define INIT_MAC_MODE           (1)                  // Mac
-#define INIT_WIN_MAC_MODE       (INIT_WIN_MODE)      // Windows
+#define INIT_WIN_MODE           (0)                  // Windows mode
+#define INIT_MAC_MODE           (1)                  // Mac mode
+#define INIT_WIN_MAC_MODE       (INIT_WIN_MODE)      // Default: Windows mode
 
-#define INIT_WIN_NLOCK          (0)                  // 不锁WIN
-#define INIT_WIN_LOCK           (1)                  // 锁WIN
-#define INIT_WIN_LOCK_NLOCK     (INIT_WIN_NLOCK)     // 不锁WIN
+#define INIT_WIN_NLOCK          (0)                  // Windows key not locked
+#define INIT_WIN_LOCK           (1)                  // Windows key locked
+#define INIT_WIN_LOCK_NLOCK     (INIT_WIN_NLOCK)     // Default: Windows key not locked
 
-#define INIT_LED_ON             (0)                  // 开背光   +
-#define INIT_LED_OFF            (1)                  // 不开背光  +
-#define INIT_LED_ON_OFF         (INIT_LED_ON)        // +
+#define INIT_LED_ON             (0)                  // Backlight ON   +
+#define INIT_LED_OFF            (1)                  // Backlight OFF  +
+#define INIT_LED_ON_OFF         (INIT_LED_ON)        // Default backlight state
 
-#define DEBOUNCE_DELAY_ONE      (2)                  // 消抖等级1
-#define DEBOUNCE_DELAY_TWO      (5)                  // 消抖等级2
-#define DEBOUNCE_DELAY_CLASS    (DEBOUNCE_DELAY_TWO) // 默认消抖等级
+#define DEBOUNCE_DELAY_ONE      (2)                  // Debounce level 1
+#define DEBOUNCE_DELAY_TWO      (5)                  // Debounce level 2
+#define DEBOUNCE_DELAY_CLASS    (DEBOUNCE_DELAY_TWO) // Default debounce level
 
 #define USER_DEFINE_KEY         (QK_KB)
 enum Custom_Keycodes {
@@ -215,41 +215,41 @@ enum Custom_Keycodes {
 /************************基本变量**************************/
 /************************基本变量**************************/
 typedef struct {
-    uint8_t Key_Mode;               // 键盘工作模式
-    uint8_t Key_Mode_Old;           // 键盘上一次的工作模式
+    uint8_t Key_Mode;               // Keyboard work mode
+    uint8_t Key_Mode_Old;           // Previous keyboard work mode
     uint8_t Ble_Channel;            // 蓝牙通道
-    uint8_t Batt_Number;            // 电池电量
-    uint8_t Nkro;                   // 六键全键无冲
-    uint8_t Mac_Win_Mode;           // MAC系统WIN系统
-    uint8_t Win_Lock;               // 锁WIN
+    uint8_t Batt_Number;            // Battery level (percentage)
+    uint8_t Nkro;                   // NKRO / 6-key rollover (non-conflict)
+    uint8_t Mac_Win_Mode;           // Mac/Windows mode
+    uint8_t Win_Lock;               // Windows key lock
     uint8_t Led_On_Off;             // 背光开关
-    uint8_t Debounce_Delay;         // 按键消抖 +
+    uint8_t Debounce_Delay;         // Key debounce
 #if LOGO_LED_ENABLE
-    uint8_t Logo_On_Off;            // LOGO灯光开关
-    uint8_t Logo_Mode;              // LOGO灯光模式
-    uint8_t Logo_Colour;            // LOGO灯光颜色
-    uint8_t Logo_Saturation;        // LOGO灯光饱和度
-    uint8_t Logo_Brightness;        // LOGO灯光亮度
-    uint8_t Logo_Speed;             // LOGO灯光速度
+    uint8_t Logo_On_Off;            // Logo LED on/off
+    uint8_t Logo_Mode;              // Logo LED mode
+    uint8_t Logo_Colour;            // Logo LED color
+    uint8_t Logo_Saturation;        // Logo LED saturation
+    uint8_t Logo_Brightness;        // Logo LED brightness
+    uint8_t Logo_Speed;             // Logo LED speed
 #endif
 #if SIDE_LED_ENABLE
-    uint8_t Side_On_Off;            // 测灯灯光开关
-    uint8_t Side_Mode;              // 测灯灯光模式
-    uint8_t Side_Colour;            // 测灯灯光颜色
-    uint8_t Side_Saturation;        // 测灯灯光饱和度
-    uint8_t Side_Brightness;        // 测灯灯光亮度
-    uint8_t Side_Speed;             // 测灯灯光速度
+    uint8_t Side_On_Off;            // Side LED on/off
+    uint8_t Side_Mode;              // Side LED mode
+    uint8_t Side_Colour;            // Side LED color
+    uint8_t Side_Saturation;        // Side LED saturation
+    uint8_t Side_Brightness;        // Side LED brightness
+    uint8_t Side_Speed;             // Side LED speed
 #endif
 } Keyboard_Info_t;
 extern Keyboard_Info_t Keyboard_Info;
 
 typedef struct {
-    uint8_t System_Work_Status;     // 系统状态
-    uint8_t System_Work_Mode;       // 工作模式
-    uint8_t System_Work_Channel;    // 工作通道
-    uint8_t System_Connect_Status;  // 连接状态
-    uint8_t System_Led_Status;      // 系统指示灯
-    uint8_t System_Sleep_Mode;      // 系统休眠
+    uint8_t System_Work_Status;     // System status
+    uint8_t System_Work_Mode;       // Work mode
+    uint8_t System_Work_Channel;    // Work channel
+    uint8_t System_Connect_Status;  // Connection status
+    uint8_t System_Led_Status;      // System indicator LED status
+    uint8_t System_Sleep_Mode;      // System sleep mode
 } Keyboard_Status_t;
 extern Keyboard_Status_t Keyboard_Status;
 
@@ -267,9 +267,9 @@ uint16_t Time_3s_Count;
 uint16_t Time_Key_Press_3s_Count; // +
 //uint16_t Func_Time_3s_Count;
 
-/************************数据队列**************************/
-/************************数据队列**************************/
-/************************数据队列**************************/
+/************************ Data Queue **************************/
+/************************ Data Queue **************************/
+/************************ Data Queue **************************/
 #define APP_2G4_BUF_SIZE            (USER_KEYBOARD_LENGTH)
 #define APP_2G4_BUF_CNT             (20)
 
@@ -325,9 +325,9 @@ void Spi_Send_Commad(uint8_t Commad);
 uint8_t Spi_Ack_Send_Commad(uint8_t Commad);
 void Get_Spi_Return_Data(uint8_t *Data);
 
-/**************************模式切换****************************/
-/**************************模式切换****************************/
-/**************************模式切换****************************/
+/************************* Mode Switching ****************************/
+/************************* Mode Switching ****************************/
+/************************* Mode Switching ****************************/
 volatile host_driver_t *es_qmk_driver;
 const    host_driver_t es_user_driver;
 
@@ -340,25 +340,25 @@ void Mode_Synchronization(void);
 void Ble_Name_Synchronization(void);
 void User_bluetooth_send_keyboard(uint8_t *report, uint32_t len);
 
-/************************按键消抖**************************/
-/************************按键消抖**************************/
-/************************按键消抖**************************/
-unsigned int Debounce_Delay;                      //键盘消抖次数，最大为127
+/************************ Key Debounce **************************/
+/************************ Key Debounce **************************/
+/************************ Key Debounce **************************/
+unsigned int Debounce_Delay;                      // Debounce count for keys, max 127
 uint8_t  Debounce_Point_Count;
 uint16_t User_Key_3s_Count;
 bool     Debounce_Function_Count;
 bool     Debounce_Function_Status;
 
-/************************键盘恢复初始化变量********************/
-/************************键盘恢复初始化变量********************/
-/************************键盘恢复初始化变量********************/
+/************************ Keyboard Restore/Init Variables **************************/
+/************************ Keyboard Restore/Init Variables **************************/
+/************************ Keyboard Restore/Init Variables **************************/
 // uint16_t Time_3s_EE_CLR_Count;   // +
 // bool     User_QMK_EE_CLR_Flag;   // +
 // bool     User_EE_CLR_Start_Flag; // +
 
-/************************键盘状态控制变量********************/
-/************************键盘状态控制变量********************/
-/************************键盘状态控制变量********************/
+/************************ Keyboard State Control Variables **************************/
+/************************ Keyboard State Control Variables **************************/
+/************************ Keyboard State Control Variables **************************/
 uint16_t User_State_Flag;
 uint16_t User_State_Count;
 uint16_t User_State_Fulfill_Flag;
@@ -366,22 +366,22 @@ bool     User_State_EE_CLR_LED_Flag;
 bool     User_State_Fulfill_LED_Flag;
 bool     User_State_DEL_INS_Flag;
 
-/************************六键按键释放BUFF移位********************/
-/************************六键按键释放BUFF移位********************/
-/************************六键按键释放BUFF移位********************/
+/************************ 6-Key Release Buffer Shift **************************/
+/************************ 6-Key Release Buffer Shift **************************/
+/************************ 6-Key Release Buffer Shift **************************/
 // void General_Key_Reorder(uint8_t Spot_Index);
 // void del_key_from_report(uint8_t key);
 
-/************************矩阵按键相关变量********************/
-/************************矩阵按键相关变量********************/
-/************************矩阵按键相关变量********************/
+/************************ Matrix Key Related Variables **************************/
+/************************ Matrix Key Related Variables **************************/
+/************************ Matrix Key Related Variables **************************/
 bool Key_Win_Status;
 
 bool Key_Value_Dispose(uint16_t keycode, keyrecord_t *record);
 
-/**************************系统函数****************************/
-/**************************系统函数****************************/
-/**************************系统函数****************************/
+/************************** System Functions ****************************/
+/************************** System Functions ****************************/
+/************************** System Functions ****************************/
 #define KEYBAORD_COL                (16)
 #define KEYBAORD_ROL                (6)
 
@@ -419,9 +419,9 @@ void es_change_qmk_nkro_mode_enable(void);
 void es_change_qmk_nkro_mode_disable(void);
 void User_Keyboard_Init(void);
 void User_Keyboard_Post_Init(void);
-/************************USB 插件**************************/
-/************************USB 插件**************************/
-/************************USB 插件**************************/
+/************************ USB Plugin **************************/
+/************************ USB Plugin **************************/
+/************************ USB Plugin **************************/
 void User_Usb_Init(void);
 void es_restart_usb_driver(void);
 void Usb_Disconnect(void);
@@ -434,20 +434,20 @@ void eeprom_driver_init(void);
 void eeprom_write_block_user(const void *buf, void *addr, size_t len);
 void eeprom_read_block_user(void *buf, const void *addr, size_t len);
 
-/*************************电池******************************/
-/*************************电池******************************/
-/*************************电池******************************/
+/************************* Battery ******************************/
+/************************* Battery ******************************/
+/************************* Battery ******************************/
 #define USER_BATT_POWER_SCAN_COUNT  (10)
 #define USER_BATT_SCAN_COUNT        (10)
 
-#define USER_BATT_HIGH_POWER        (2555)      //满电 2555 * 3.3 /4096 = 2.058 4.13V     实际电路存在压降。
-#define USER_BATT_LOW_POWER         (2080)      //低电 2080 * 3.3 /4096 = 1.676 3.32V     即使键盘不开灯，电池满电4.2V
-#define USER_BATT_STDOWN_POWER      (1865)      //关机 1865 * 3.3 /4096 = 1.502 3.04V     输入到板子也就只有4.1V左右
+#define USER_BATT_HIGH_POWER        (2555)      // Full battery threshold: ADC 2555 -> 2555 * 3.3 /4096 = 2.058 (ADC voltage), battery ~4.13V; note circuit voltage drop.
+#define USER_BATT_LOW_POWER         (2080)      // Low battery threshold: ADC 2080 -> 2080 * 3.3 /4096 = 1.676 (ADC voltage), battery ~3.32V.
+#define USER_BATT_STDOWN_POWER      (1865)      // Shutdown threshold: ADC 1865 -> 1865 * 3.3 /4096 = 1.502 (ADC voltage), battery ~3.04V; board input ~4.1V.
 
-#define USER_BATT_DELAY_TIME        (100 * 25)  //25S
-#define USER_TIME_3S_TIME           (300)       //3S
-#define USER_TIME_2S_TIME           (200)       //2S
-#define USER_TIME_10S_TIME          (1000)      //10S
+#define USER_BATT_DELAY_TIME        (100 * 25)  // 25 seconds
+#define USER_TIME_3S_TIME           (300)       // 3 seconds
+#define USER_TIME_2S_TIME           (200)       // 2 seconds
+#define USER_TIME_10S_TIME          (1000)      // 10 seconds
 
 uint16_t User_Adc_Batt[USER_BATT_SCAN_COUNT];
 uint16_t User_Scan_Batt[USER_BATT_SCAN_COUNT];
@@ -479,9 +479,9 @@ void U16_Buff_Clear(uint16_t *Buff, uint8_t Len);
 void User_Adc_Batt_Power_Up_Init(void);
 void User_Adc_Batt_Number(void);
 
-/************************主控灯光**************************/
-/************************主控灯光**************************/
-/************************主控灯光**************************/
+/************************ Main LED Lights **************************/
+/************************ Main LED Lights **************************/
+/************************ Main LED Lights **************************/
 #define ES_PWM_LED_SIZE         (42)
 #define ES_PWM_LED_BYTE         (24)
 #define ES_PWM_DMA_SIZE         (ES_PWM_LED_SIZE * ES_PWM_LED_BYTE)
@@ -544,49 +544,49 @@ void Led_Point_Flash_Show(void);
 void User_Led_Show(void);
 void User_Get_Led_Power_Status(void);
 
-/************************侧灯灯光**************************/
-/************************侧灯灯光**************************/
-/************************侧灯灯光**************************/
+/************************ Logo LED Lights **************************/
+/************************ Logo LED Lights **************************/
+/************************ Logo LED Lights **************************/
 #if LOGO_LED_ENABLE
-#define LOGO_LED_PLAY_SPEED	        (0)                              // 灯光刷新速度
-#define LOGO_LED_SIZE	            (5)                              // 灯光数量
+#define LOGO_LED_PLAY_SPEED	        (0)                              // LED update speed
+#define LOGO_LED_SIZE	            (5)                              // Number of LEDs
 
-#define LOGO_LED_ON                 (0)                              // 灯光打开
-#define LOGO_LED_OFF                (1)                              // 灯光关闭
+#define LOGO_LED_ON                 (0)                              // LED ON
+#define LOGO_LED_OFF                (1)                              // LED OFF
 
-#define LOGO_WAVE_RGB_MODE          (1)                              // 彩色波浪
-#define LOGO_WAVE_1_RGB_MODE        (2)                              // 彩色波浪1
-#define LOGO_WAVE_2_RGB_MODE        (3)                              // 彩色波浪2
-#define LOGO_WAVE_DS_MODE           (4)                              // 单色波浪
-#define LOGO_WAVE_MIX_MODE          (5)                              // 彩色波浪
-#define LOGO_SPECTRUM_MODE          (6)                              // 光谱
-#define LOGO_BREATH_MODE            (7)                              // 单色呼吸
-#define LOGO_BREATH_MIX_MODE        (8)                              // 彩色呼吸
-#define LOGO_LIGHT_MODE             (9)                              // 单色常量
-#define LOGO_OFF_MODE               (10)                             // 关闭
+#define LOGO_WAVE_RGB_MODE          (1)                              // Color wave
+#define LOGO_WAVE_1_RGB_MODE        (2)                              // Color wave 1
+#define LOGO_WAVE_2_RGB_MODE        (3)                              // Color wave 2
+#define LOGO_WAVE_DS_MODE           (4)                              // Single-color wave
+#define LOGO_WAVE_MIX_MODE          (5)                              // Color wave mix
+#define LOGO_SPECTRUM_MODE          (6)                              // Spectrum
+#define LOGO_BREATH_MODE            (7)                              // Single-color breathing
+#define LOGO_BREATH_MIX_MODE        (8)                              // Color breathing
+#define LOGO_LIGHT_MODE             (9)                              // Single-color steady
+#define LOGO_OFF_MODE               (10)                             // Off
 
-#define LOGO_MAX_COLOUR             (255)                            // 颜色最大
-#define LOGO_MIN_COLOUR             (0)                              // 颜色最小
-#define COLOUR_LEVEL                (15)                             // 颜色等级
+#define LOGO_MAX_COLOUR             (255)                            // Max color value
+#define LOGO_MIN_COLOUR             (0)                              // Min color value
+#define COLOUR_LEVEL                (15)                             // Color level steps
 
-#define LOGO_MAX_SATURATION         (0)                              // 饱和度最大
-#define LOGO_MIN_SATURATION         (255)                            // 饱和度最小
-#define SATURATION_LEVEL            (15)                             // 饱和度等级
+#define LOGO_MAX_SATURATION         (0)                              // Max saturation
+#define LOGO_MIN_SATURATION         (255)                            // Min saturation
+#define SATURATION_LEVEL            (15)                             // Saturation level steps
 
-#define LOGO_MAX_BRIGHTNESS         (105)                            // 亮度最大
-#define LOGO_MIN_BRIGHTNESS         (0)                              // 亮度最小
-#define BRIGHTNESS_LEVEL            (15)                             // 亮度等级
+#define LOGO_MAX_BRIGHTNESS         (105)                            // Max brightness
+#define LOGO_MIN_BRIGHTNESS         (0)                              // Min brightness
+#define BRIGHTNESS_LEVEL            (15)                             // Brightness level steps
 
-#define LOGO_MAX_SPEED              (4)                              // 速度最大
-#define LOGO_MIN_SPEED              (0)                              // 速度最小
-#define SPEED_LEVEL                 (1)                              // 速度等级
+#define LOGO_MAX_SPEED              (4)                              // Max speed
+#define LOGO_MIN_SPEED              (0)                              // Min speed
+#define SPEED_LEVEL                 (1)                              // Speed level steps
 
-#define INIT_LOGO_ON_OFF            (LOGO_LED_ON)                    // 灯光打开
-#define INIT_LOGO_MODE              (LOGO_WAVE_RGB_MODE)             // 彩色波浪
-#define INIT_LOGO_COLOUR            (LOGO_MIN_COLOUR)                // 颜色最小
-#define INIT_LOGO_SATURATION        (LOGO_MAX_SATURATION)            // 饱和度最大
-#define INIT_LOGO_BRIGHTNESS        (60)                             // 亮度最大
-#define INIT_LOGO_SPEED             (2)                              // 速度居中
+#define INIT_LOGO_ON_OFF            (LOGO_LED_ON)                    // LED ON
+#define INIT_LOGO_MODE              (LOGO_WAVE_RGB_MODE)             // Color wave default
+#define INIT_LOGO_COLOUR            (LOGO_MIN_COLOUR)                // Default color (min)
+#define INIT_LOGO_SATURATION        (LOGO_MAX_SATURATION)            // Default saturation (max)
+#define INIT_LOGO_BRIGHTNESS        (60)                             // Default brightness
+#define INIT_LOGO_SPEED             (2)                              // Default speed (center)
 
 uint8_t Logo_Flash_Count;
 uint8_t Logo_Led_Count;
@@ -602,44 +602,44 @@ void    User_Via_Qmk_Logo_Command(uint8_t *data, uint8_t length);
 #endif
 //--------------------------------------------------------------------------------------------------------
 #if SIDE_LED_ENABLE
-#define SIDE_LED_PLAY_SPEED	        (0)                                 // 灯光刷新速度
-#define SIDE_LED_SIZE	            (38)                                // 侧灯数量
+#define SIDE_LED_PLAY_SPEED	        (0)                                 // LED update speed
+#define SIDE_LED_SIZE	            (38)                                // Number of side LEDs
 
-#define SIDE_LED_ON                 (0)                                 // 灯光打开
-#define SIDE_LED_OFF                (1)                                 // 灯光关闭
+#define SIDE_LED_ON                 (0)                                 // LED ON
+#define SIDE_LED_OFF                (1)                                 // LED OFF
 
-#define SIDE_WAVE_RGB_MODE          (1)                                 // 彩色波浪
-#define SIDE_SPECTRUM_MODE          (2)                                 // 光谱
-#define SIDE_LIGHT_MODE             (3)                                 // 单色常亮
-#define SIDE_LIGHT_MODE_GREEN       (4)                                 // 绿色常亮
-#define SIDE_LIGHT_MODE_BLUE        (5)                                 // 蓝色常亮
-#define SIDE_LIGHT_MODE_PINK        (6)                                 // 粉色常亮
-#define SIDE_LIGHT_MODE_YELLOW      (7)                                 // 黄色常亮
-#define SIDE_LIGHT_MODE_WHITE       (8)                                 // 白色常亮
-#define SIDE_OFF_MODE               (9)                                 // 关闭
+#define SIDE_WAVE_RGB_MODE          (1)                                 // Color wave
+#define SIDE_SPECTRUM_MODE          (2)                                 // Spectrum
+#define SIDE_LIGHT_MODE             (3)                                 // Single-color steady
+#define SIDE_LIGHT_MODE_GREEN       (4)                                 // Green steady
+#define SIDE_LIGHT_MODE_BLUE        (5)                                 // Blue steady
+#define SIDE_LIGHT_MODE_PINK        (6)                                 // Pink steady
+#define SIDE_LIGHT_MODE_YELLOW      (7)                                 // Yellow steady
+#define SIDE_LIGHT_MODE_WHITE       (8)                                 // White steady
+#define SIDE_OFF_MODE               (9)                                 // Off
 
-#define SIDE_MAX_COLOUR             (255)                               // 颜色最大
-#define SIDE_MIN_COLOUR             (0)                                 // 颜色最小
-#define SIDE_COLOUR_LEVEL           (15)                                // 颜色等级
+#define SIDE_MAX_COLOUR             (255)                               // Max color value
+#define SIDE_MIN_COLOUR             (0)                                 // Min color value
+#define SIDE_COLOUR_LEVEL           (15)                                // Color level steps
 
-#define SIDE_MAX_SATURATION         (0)                                 // 饱和度最大
-#define SIDE_MIN_SATURATION         (255)                               // 饱和度最小
-#define SIDE_SATURATION_LEVEL       (15)                                // 饱和度等级
+#define SIDE_MAX_SATURATION         (0)                                 // Max saturation
+#define SIDE_MIN_SATURATION         (255)                               // Min saturation
+#define SIDE_SATURATION_LEVEL       (15)                                // Saturation level steps
 
-#define SIDE_MAX_BRIGHTNESS         (70)                                
-#define SIDE_MIN_BRIGHTNESS         (0)                                 // 亮度最小
-#define SIDE_BRIGHTNESS_LEVEL       (15)                                // 亮度等级
+#define SIDE_MAX_BRIGHTNESS         (70)                                // Max brightness
+#define SIDE_MIN_BRIGHTNESS         (0)                                 // Min brightness
+#define SIDE_BRIGHTNESS_LEVEL       (15)                                // Brightness level steps
 
-#define SIDE_MAX_SPEED              (4)                                 // 速度最大
-#define SIDE_MIN_SPEED              (0)                                 // 速度最小
-#define SIDE_SPEED_LEVEL            (1)                                 // 速度等级
+#define SIDE_MAX_SPEED              (4)                                 // Max speed
+#define SIDE_MIN_SPEED              (0)                                 // Min speed
+#define SIDE_SPEED_LEVEL            (1)                                 // Speed level steps
 
-#define INIT_SIDE_ON_OFF            (SIDE_LED_ON)                       // 灯光打开
-#define INIT_SIDE_MODE              (SIDE_WAVE_RGB_MODE)                // 彩色波浪
-#define INIT_SIDE_COLOUR            (SIDE_MIN_COLOUR)                   // 颜色最小
-#define INIT_SIDE_SATURATION        (SIDE_MAX_SATURATION)               // 饱和度最大
-#define INIT_SIDE_BRIGHTNESS        (SIDE_MAX_BRIGHTNESS)               // 亮度最大
-#define INIT_SIDE_SPEED             (2)                                 // 速度居中
+#define INIT_SIDE_ON_OFF            (SIDE_LED_ON)                       // LED ON
+#define INIT_SIDE_MODE              (SIDE_WAVE_RGB_MODE)                // Color wave default
+#define INIT_SIDE_COLOUR            (SIDE_MIN_COLOUR)                   // Default color (min)
+#define INIT_SIDE_SATURATION        (SIDE_MAX_SATURATION)               // Default saturation (max)
+#define INIT_SIDE_BRIGHTNESS        (SIDE_MAX_BRIGHTNESS)               // Default brightness
+#define INIT_SIDE_SPEED             (2)                                 // Default speed (center)
 
 //uint8_t Side_Flash_Count;
 uint8_t Side_Led_Count;
