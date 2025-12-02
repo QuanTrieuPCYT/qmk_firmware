@@ -16,11 +16,6 @@
  */
 #pragma once
 
-/* Mechanical locking support. Use KC_LCAP, KC_LNUM or KC_LSCR instead in keymap */
-#define LOCKING_SUPPORT_ENABLE
-/* Locking resynchronize hack */
-#define LOCKING_RESYNC_ENABLE
-
 /* Define less important options */
 
 /*
@@ -54,8 +49,12 @@
 /* Ensure we jump to bootloader if the RESET keycode was pressed */
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP TRUE
 
+// delay-related configurations
 #define DEBOUNCE 0
+#define MATRIX_IO_DELAY 0
+#define USB_POLLING_INTERVAL_MS 1
 
+// nop fudge declaration
 #ifndef NOP_FUDGE
 #define NOP_FUDGE 0.4
 #endif

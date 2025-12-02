@@ -1,2 +1,2 @@
 VIA_ENABLE = yes
-EEPROM_DRIVER = custom
+LTO_ENABLE = yes
