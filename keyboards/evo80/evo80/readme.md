@@ -4,12 +4,16 @@ A customizable 88key keyboard.
 
 ![evo80]
 
-* Keyboard Maintainer: 
+* Keyboard Maintainer: [QuanTrieuPCYT](https://github.com/QuanTrieuPCYT)
 * Hardware Supported: evo80 PCB with es32fs026 microcontroller
 
 Make example for this keyboard (after setting up your build environment):
 
     make evo80/evo80:default
+    
+To compile with VIA support:
+
+    make evo80/evo80:via
 
 Flashing example for this keyboard:
 
@@ -19,6 +23,6 @@ See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_to
 
 ## Bootloader
 
-Enter the bootloader in 2 ways:
+Enter the bootloader:
 
 * **Bootmagic reset**: Hold down the key at (0,0) in the matrix (Esc key) and plug in the keyboard
