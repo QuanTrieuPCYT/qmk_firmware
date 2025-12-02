@@ -50,6 +50,8 @@
 
 #define MATRIX_UNSELECT_DRIVE_HIGH
 #define CORTEX_ENABLE_WFI_IDLE          FALSE
+#define NO_MUSIC_MODE
+#define LAYER_STATE_8BIT
 
 /* Ensure we jump to bootloader if the RESET keycode was pressed */
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP TRUE
