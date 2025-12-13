@@ -73,7 +73,8 @@
             "starlight_smooth": true,
             "starlight_dual_hue": true,
             "starlight_dual_sat": true,
-            "riverflow": true
+            "riverflow": true,
+            "signalrgb": true
         }
     },
     "processor": "FS026",
