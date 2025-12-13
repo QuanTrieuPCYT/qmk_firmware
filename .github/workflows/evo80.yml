@@ -1,0 +1,35 @@
+name: Build and Upload Evoworks Evo80 firmware builds
+on:
+  push:
+    branches: [ "evo80" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository and its submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Install build dependencies
+        run: sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi --no-install-recommends -y
+            
+      - name: Install QMK toolchain
+        run: curl -fsSL https://install.qmk.fm | CONFIRM=1 SKIP_CLEAN=1 UV_INSTALL_DIR=uv QMK_DISTRIB_DIR=qmk SKIP_QMK_FLASHUTILS=1 SKIP_UDEV_RULES=1 SKIP_WINDOWS_DRIVERS=1 sh
+
+      - name: Install missing Python dependencies
+        run: ~/.local/share/uv/tools/qmk/bin/python -m pip install -r requirements.txt
+
+      - name: Build firmware for all keymaps
+        run: make evoworks/evo80:all
+
+      - name: Make artifact folder, and sort artifacts
+        run: mkdir dist && mv .build/*.bin .build/*.hex dist/
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: evo80-build
+          path: dist/*
