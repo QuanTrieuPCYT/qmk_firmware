@@ -2,7 +2,7 @@
 
 A customizable 88key keyboard.
 
-![evo80](https://github.com/user-attachments/assets/d6d86e5d-0b82-4876-b540-360ffed3ab77)
+![evo80](https://github.com/user-attachments/assets/e17b1625-d6a9-4a62-ba09-067e269c3a69)
 
 
 * Keyboard Maintainer: [QuanTrieuPCYT](https://github.com/QuanTrieuPCYT)
