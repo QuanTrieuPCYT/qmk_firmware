@@ -2,7 +2,8 @@
 
 A customizable 88key keyboard.
 
-![evo80]
+![evo80](https://github.com/user-attachments/assets/10843f6e-53f5-407a-b4cc-1afb4055c416)
+
 
 * Keyboard Maintainer: [QuanTrieuPCYT](https://github.com/QuanTrieuPCYT)
 * Hardware Supported: evo80 PCB with es32fs026 microcontroller
