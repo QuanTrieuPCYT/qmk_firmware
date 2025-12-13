@@ -9,15 +9,15 @@ A customizable 88key keyboard.
 
 Make example for this keyboard (after setting up your build environment):
 
-    make evo80/evo80:default
+    make evoworks/evo80:default
     
 To compile with VIA support:
 
-    make evo80/evo80:via
+    make evoworks/evo80:via
 
 Flashing example for this keyboard:
 
-    make evo80/evo80:default:flash
+    make evoworks/evo80:default:flash
 
 See the [build environment setup](https://docs.qmk.fm/#/getting_started_build_tools) and the [make instructions](https://docs.qmk.fm/#/getting_started_make_guide) for more information. Brand new to QMK? Start with our [Complete Newbs Guide](https://docs.qmk.fm/#/newbs).
 
