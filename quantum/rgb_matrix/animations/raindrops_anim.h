@@ -7,14 +7,9 @@ static void raindrops_set_color(int i, effect_params_t* params) {
     HSV hsv = {0, rgb_matrix_config.hsv.s, rgb_matrix_config.hsv.v};
 
     // Take the shortest path between hues
-    int16_t deltaH = ((rgb_matrix_config.hsv.h + 180) % 360 - rgb_matrix_config.hsv.h) / 4;
-    if (deltaH > 127) {
-        deltaH -= 256;
-    } else if (deltaH < -127) {
-        deltaH += 256;
-    }
-
+    int8_t deltaH = (int8_t)((hsv.h + 128) - hsv.h) / 4;
     hsv.h   = rgb_matrix_config.hsv.h + (deltaH * (random8() & 0x03));
+
     RGB rgb = rgb_matrix_hsv_to_rgb(hsv);
     rgb_matrix_set_color(i, rgb.r, rgb.g, rgb.b);
 }
