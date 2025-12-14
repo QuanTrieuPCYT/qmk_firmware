@@ -57,7 +57,6 @@
             "pixel_rain": true,
             "typing_heatmap": true,
             "digital_rain": true,
-            "digital_rain_reloaded": true,
             "solid_reactive_simple": true,
             "solid_reactive": true,
             "solid_reactive_wide": true,
