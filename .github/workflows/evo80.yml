@@ -25,11 +25,8 @@ jobs:
       - name: Build firmware for all keymaps
         run: make evoworks/evo80:all
 
-      - name: Make artifact folder, and sort artifacts
-        run: mkdir dist && mv .build/*.bin .build/*.hex dist/
-
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
           name: evo80-build
-          path: dist/*
+          path: .build/*.bin
