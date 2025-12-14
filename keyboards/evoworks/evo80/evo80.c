@@ -17,6 +17,26 @@
 
 #include "../../../lib/rdr_lib/rdr_common.h"
 
+bool kb_get_caps_lock_state(void) {
+    if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
+        return host_keyboard_led_state().caps_lock && Usb_If_Ok_Led;
+    }
+    return (Keyboard_Status.System_Led_Status & 0x02);
+}
+
+bool led_update_user(led_t led_state) {
+    if (Keyboard_Info.Key_Mode != QMK_USB_MODE) {
+        if (led_state.caps_lock) {
+            Keyboard_Status.System_Led_Status |= 0x02;
+        } else {
+            Keyboard_Status.System_Led_Status &= ~0x02;
+        }
+    }
+
+    rgb_matrix_set_flags(LED_FLAG_ALL);
+    return true;
+}
+
 void matrix_io_delay(void) {
 }
 
@@ -56,6 +76,17 @@ led_config_t g_led_config = { {
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
+#if LOGO_LED_ENABLE
+    if (kb_get_caps_lock_state()) {
+        for (uint8_t i = 0; i < LOGO_LED_SIZE; i++) {
+            uint8_t current_index = LED_STOP_INDEX + i;
+            
+            if (current_index >= led_min && current_index <= led_max) {
+                rgb_matrix_set_color(current_index, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+            }
+        }
+    }
+#endif
     return false;
 }
 
