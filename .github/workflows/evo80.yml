@@ -2,6 +2,7 @@ name: Build and Upload Evoworks Evo80 firmware builds
 on:
   push:
     branches: [ "evo80" ]
+  workflow_dispatch:
 
 jobs:
   build-and-push:
