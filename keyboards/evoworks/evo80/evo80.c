@@ -17,11 +17,31 @@
 
 #include "../../../lib/rdr_lib/rdr_common.h"
 
-bool kb_get_caps_lock_state(void) {
+#define BATT_LED_START_IDX 18
+#define BATT_LED_END_IDX   27
+#define BATT_LED_TOTAL     10
+
+static const uint8_t wave_tab_led[128] = {
+    0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 255, 255, 248, 244, 240, 236, 232, 228, 224, 220, 216, 212, 208, 204, 200, 196, 192, 188, 184, 180, 176, 172, 168, 164, 160, 156, 152, 148, 144, 140, 136, 132, 128, 124, 120, 116, 112, 108, 104, 100, 96, 92, 88, 84, 80, 76, 72, 68, 64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0
+};
+
+static inline bool kb_get_caps_lock_state(void) {
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
         return host_keyboard_led_state().caps_lock && Usb_If_Ok_Led;
     }
     return (Keyboard_Status.System_Led_Status & 0x02);
+}
+
+static inline void set_battery_color(uint8_t percent, uint8_t *r, uint8_t *g, uint8_t *b) {
+    if (percent <= 10) {
+        *r = 180; *g = 0;   *b = 0;
+    } else if (percent < 50) {
+        *r = 180; *g = 180; *b = 0;
+    } else if (percent < 80) {
+        *r = 0;   *g = 0;   *b = 180;
+    } else {
+        *r = 0;   *g = 180; *b = 0;
+    }
 }
 
 bool led_update_user(led_t led_state) {
@@ -32,19 +52,13 @@ bool led_update_user(led_t led_state) {
             Keyboard_Status.System_Led_Status &= ~0x02;
         }
     }
-
     rgb_matrix_set_flags(LED_FLAG_ALL);
     return true;
 }
 
-void matrix_io_delay(void) {
-}
-
-void matrix_output_select_delay(void) {
-}
-
-void matrix_output_unselect_delay(uint8_t line, bool key_pressed) {
-}
+void matrix_io_delay(void) {}
+void matrix_output_select_delay(void) {}
+void matrix_output_unselect_delay(uint8_t line, bool key_pressed) {}
 
 led_config_t g_led_config = { {
 	{ 0        , 1        , 2        , 3        , 4        , 5        , 6        , 7        , 8        , 9        , 10       , 11       , 12       , 14       , 15       , 16        },
@@ -74,43 +88,25 @@ led_config_t g_led_config = { {
     0,  0,  0,  0,  0
 } };
 
-void kb_get_battery_color(uint8_t percent, uint8_t *r, uint8_t *g, uint8_t *b) {
-    if (percent <= 10) {
-        *r = 180;
-        *g = 0;
-        *b = 0;
-    } else if (percent < 50) {
-        *r = 180;
-        *g = 180;
-        *b = 0;
-    } else if (percent < 80) {
-        *r = 0;
-        *g = 0;
-        *b = 180;
-    } else {
-        *r = 0;
-        *g = 180;
-        *b = 0;
-    }
-}
-
 void kb_led_batt_number_show(void) {
     if (es_stdby_pin_state == 1) {
         if (Batt_Led_Count >= 2) {
             Batt_Led_Count = 0;
-            User_Key_Batt_Count = (User_Key_Batt_Count > 3) ? (User_Key_Batt_Count - 3) : 127;
+            if (User_Key_Batt_Count > 3) 
+                User_Key_Batt_Count -= 3;
+            else 
+                User_Key_Batt_Count = 127;
         }
 
         uint8_t wave_offset = User_Key_Batt_Count;
-        uint8_t wave_tab_led[128] = {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 255, 255, 248, 244, 240, 236, 232, 228, 224, 220, 216, 212, 208, 204, 200, 196, 192, 188, 184, 180, 176, 172, 168, 164, 160, 156, 152, 148, 144, 140, 136, 132, 128, 124, 120, 116, 112, 108, 104, 100, 96, 92, 88, 84, 80, 76, 72, 68, 64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0};
         
-        for (uint8_t i = 18; i <= 27; i++) {
+        for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
             rgb_matrix_set_color(i, 0, wave_tab_led[wave_offset], 0);
-            wave_offset = (wave_offset + 8) % 128;
+            wave_offset = (wave_offset + 8) & 127; 
         }
 
     } else if (es_stdby_pin_state == 2) {
-        for (uint8_t i = 18; i <= 27; i++) {
+        for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
             rgb_matrix_set_color(i, 0, 180, 0);
         }
 
@@ -119,10 +115,10 @@ void kb_led_batt_number_show(void) {
         if (led_count > 10) led_count = 10;
 
         uint8_t r, g, b;
-        kb_get_battery_color(Keyboard_Info.Batt_Number, &r, &g, &b);
+        set_battery_color(Keyboard_Info.Batt_Number, &r, &g, &b);
 
-        for (uint8_t i = 18; i <= 27; i++) {
-            if ((i - 18) < led_count) {
+        for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
+            if ((i - BATT_LED_START_IDX) < led_count) {
                 rgb_matrix_set_color(i, r, g, b);
             } else {
                 rgb_matrix_set_color(i, 0, 0, 0);
@@ -148,18 +144,14 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     return false;
 }
 
-void notify_usb_device_state_change_user(enum usb_device_state usb_device_state)  {
+void notify_usb_device_state_change_user(enum usb_device_state usb_device_state) {
+    bool is_configured = (usb_device_state == USB_DEVICE_STATE_CONFIGURED);
+    
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
-        if(usb_device_state == USB_DEVICE_STATE_CONFIGURED) {
-            Usb_If_Ok = true; // usb enumeration complete
-            Usb_If_Ok_Led = true;
-            Usb_If_Ok_Delay = 0;
-            Usb_Suspend_Sig = false;
-        } else {
-            Usb_If_Ok = false;
-            Usb_If_Ok_Led = false;
-            Usb_Suspend_Sig = true;
-        }
+        Usb_If_Ok = is_configured;
+        Usb_If_Ok_Led = is_configured;
+        if (is_configured) Usb_If_Ok_Delay = 0;
+        Usb_Suspend_Sig = !is_configured;
     } else {
         Usb_If_Ok = false;
         Usb_If_Ok_Led = false;
@@ -168,11 +160,11 @@ void notify_usb_device_state_change_user(enum usb_device_state usb_device_state)
 }
 
 void housekeeping_task_user(void) {
-    if(User_State_Fulfill_Flag){
+    if (User_State_Fulfill_Flag) {
         User_Keyboard_Reset();
         User_State_Fulfill_Flag = 0x00;
     }
-   
+    
     if (WIN_MAC_CHANGE) {
         WIN_MAC_CHANGE = false;
         User_Mac_Win_Change();
@@ -189,9 +181,8 @@ void keyboard_post_init_user(void) {
     User_Keyboard_Post_Init();
 }
 
-bool process_record_user(uint16_t keycode, keyrecord_t *record) {   // process when user presses a key
-    Usb_Change_Mode_Delay = 0;                                      // restore rgb timeout
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    Usb_Change_Mode_Delay = 0;
     Usb_Change_Mode_Wakeup = false;
-
     return Key_Value_Dispose(keycode, record);
 }
