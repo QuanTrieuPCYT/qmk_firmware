@@ -17,8 +17,8 @@
 
 #include "../../../lib/rdr_lib/rdr_common.h"
 
-#define BATT_LED_START_IDX 18
-#define BATT_LED_END_IDX   27
+#define BATT_LED_START_IDX 35
+#define BATT_LED_END_IDX   44
 #define BATT_LED_TOTAL     10
 
 static const uint8_t wave_tab_led[128] = {
