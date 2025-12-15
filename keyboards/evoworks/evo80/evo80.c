@@ -137,6 +137,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
     }
 #endif
+    kb_led_batt_number_show();
     return false;
 }
 
