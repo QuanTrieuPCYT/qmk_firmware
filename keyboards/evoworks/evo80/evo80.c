@@ -97,29 +97,36 @@ void kb_get_battery_color(uint8_t percent, uint8_t *r, uint8_t *g, uint8_t *b) {
 void kb_led_batt_number_show(void) {
     if (es_stdby_pin_state == 1) {
         if (Batt_Led_Count >= 2) {
-            Batt_Led_Count      = 0;
+            Batt_Led_Count = 0;
             User_Key_Batt_Count = (User_Key_Batt_Count > 3) ? (User_Key_Batt_Count - 3) : 127;
         }
 
         uint8_t wave_offset = User_Key_Batt_Count;
-        uint8_t wave_tab_led[128] = {0,   4,   8,   12,  16,  20,  24,  28,  32,  36,  40,  44,  48,  52,  56,  60,  64,  68,  72,  76,  80,  84,  88,  92,  96,  100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 255, 255, 248, 244, 240, 236, 232, 228, 224, 220, 216, 212, 208, 204, 200, 196, 192, 188, 184, 180, 176, 172, 168, 164, 160, 156, 152, 148, 144, 140, 136, 132, 128, 124, 120, 116, 112, 108, 104, 100, 96,  92,  88,  84,  80,  76,  72,  68,  64,  60,  56,  52,  48,  44,  40,  36,  32,  28,  24,  20,  16,  12,  8,   4,   0,};
+        uint8_t wave_tab_led[128] = {0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 255, 255, 248, 244, 240, 236, 232, 228, 224, 220, 216, 212, 208, 204, 200, 196, 192, 188, 184, 180, 176, 172, 168, 164, 160, 156, 152, 148, 144, 140, 136, 132, 128, 124, 120, 116, 112, 108, 104, 100, 96, 92, 88, 84, 80, 76, 72, 68, 64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0};
+        
         for (uint8_t i = 18; i <= 27; i++) {
             rgb_matrix_set_color(i, 0, wave_tab_led[wave_offset], 0);
             wave_offset = (wave_offset + 8) % 128;
         }
+
     } else if (es_stdby_pin_state == 2) {
         for (uint8_t i = 18; i <= 27; i++) {
             rgb_matrix_set_color(i, 0, 180, 0);
         }
+
     } else {
-        uint8_t led_count = (Keyboard_Info.Batt_Number * 10) / 100;
+        uint8_t led_count = (Keyboard_Info.Batt_Number + 9) / 10;
         if (led_count > 10) led_count = 10;
 
         uint8_t r, g, b;
         kb_get_battery_color(Keyboard_Info.Batt_Number, &r, &g, &b);
 
         for (uint8_t i = 18; i <= 27; i++) {
-            rgb_matrix_set_color(i, r, g, b);
+            if ((i - 18) < led_count) {
+                rgb_matrix_set_color(i, r, g, b);
+            } else {
+                rgb_matrix_set_color(i, 0, 0, 0);
+            }
         }
     }
 }
