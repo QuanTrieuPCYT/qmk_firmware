@@ -208,7 +208,7 @@ void kb_led_batt_number_show(void) {
                 rgb_matrix_set_color(i, 0, 0, 0);
             }
         }
-        uint8_t logo_lit = (Keyboard_Info.Batt_Number * LOGO_LED_SIZE - 1 + 50) / 100;
+        uint8_t logo_lit = (Keyboard_Info.Batt_Number * (LOGO_LED_SIZE - 1) + 50) / 100;
         if (Keyboard_Info.Batt_Number > 0 && logo_lit == 0) logo_lit = 1; 
         for (uint8_t i = 0; i < LOGO_LED_SIZE - 1; i++) {
             if (i < logo_lit) {
