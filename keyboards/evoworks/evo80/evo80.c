@@ -129,6 +129,7 @@ void kb_led_batt_number_show(void) {
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
+    if (User_Key_Batt_Num_Show) kb_led_batt_number_show();
 #if LOGO_LED_ENABLE
     if (kb_get_caps_lock_state()) {
         for (uint8_t i = 0; i < LOGO_LED_SIZE; i++) {
@@ -140,7 +141,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         }
     }
 #endif
-    if (User_Key_Batt_Num_Show) kb_led_batt_number_show();
     return false;
 }
 
