@@ -57,7 +57,7 @@
 #define EARLY_INIT_PERFORM_BOOTLOADER_JUMP TRUE
 
 // delay-related configurations
-#define DEBOUNCE 0
+#define DEBOUNCE 5
 #define MATRIX_IO_DELAY 0
 #define USB_POLLING_INTERVAL_MS 1
 
