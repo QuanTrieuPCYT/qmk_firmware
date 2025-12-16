@@ -124,31 +124,42 @@ void kb_led_batt_number_show_matrix(void) {
             else 
                 User_Key_Batt_Count = 127;
         }
-
         uint8_t wave_offset = User_Key_Batt_Count;
-        
         for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
             rgb_matrix_set_color(i, 0, wave_tab_led[wave_offset], 0);
             wave_offset = (wave_offset + 8) & 127; 
         }
-
+        wave_offset = User_Key_Batt_Count;
+        for (uint8_t i = 0; i < LOGO_LED_SIZE - 1; i++) {
+             rgb_matrix_set_color(LED_STOP_INDEX + i, 0, wave_tab_led[wave_offset], 0);
+             wave_offset = (wave_offset + 8) & 127;
+        }
     } else if (es_stdby_pin_state == 2) {
         for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
             rgb_matrix_set_color(i, 0, 180, 0);
         }
-
+        for (uint8_t i = 0; i < LOGO_LED_SIZE - 1; i++) {
+            rgb_matrix_set_color(LED_STOP_INDEX + i, 0, 180, 0);
+        }
     } else {
         uint8_t led_count = (Keyboard_Info.Batt_Number + 9) / 10;
         if (led_count > 10) led_count = 10;
-
         uint8_t r, g, b;
         set_battery_color(Keyboard_Info.Batt_Number, &r, &g, &b);
-
         for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
             if ((i - BATT_LED_START_IDX) < led_count) {
                 rgb_matrix_set_color(i, r, g, b);
             } else {
                 rgb_matrix_set_color(i, 0, 0, 0);
+            }
+        }
+        uint8_t logo_lit = (Keyboard_Info.Batt_Number * LOGO_LED_SIZE - 1 + 50) / 100;
+        if (Keyboard_Info.Batt_Number > 0 && logo_lit == 0) logo_lit = 1; 
+        for (uint8_t i = 0; i < LOGO_LED_SIZE - 1; i++) {
+            if (i < logo_lit) {
+                rgb_matrix_set_color(LED_STOP_INDEX + i, r, g, b);
+            } else {
+                rgb_matrix_set_color(LED_STOP_INDEX + i, 0, 0, 0);
             }
         }
     }
