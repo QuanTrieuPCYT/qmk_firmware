@@ -88,37 +88,17 @@ led_config_t g_led_config = { {
     0,  0,  0,  0,  0
 } };
 
-void kb_led_batt_number_show_logo_circle(void) {
+void kb_led_batt_number_show(void) {
+    static uint8_t internal_anim_timer = 0;
     if (es_stdby_pin_state == 1) {
-        uint8_t red = 0;
-        uint8_t green = 0;
-        uint8_t blue = 0;
         if (Batt_Led_Count < 25) {
-            red = 180;
-            green = 180;
-            blue = 0;
+            rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 255, 255, 255);
         } else {
-            red = 0;
-            green = 0;
-            blue = 0;
+            rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 0, 0);
         }
-        rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, red, green, blue);
-        if (Batt_Led_Count >= 50) {
-            Batt_Led_Count = 0;
-        }
-    } else if (es_stdby_pin_state == 2) {
-        rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 180, 0);
-    } else {
-        uint8_t red, green, blue;
-        set_battery_color(Keyboard_Info.Batt_Number, &red, &green, &blue);
-        rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, red, green, blue);
-    }
-}
-
-void kb_led_batt_number_show_matrix(void) {
-    if (es_stdby_pin_state == 1) {
-        if (Batt_Led_Count >= 2) {
-            Batt_Led_Count = 0;
+        internal_anim_timer++;
+        if (internal_anim_timer >= 2) {
+            internal_anim_timer = 0;
             if (User_Key_Batt_Count > 3) 
                 User_Key_Batt_Count -= 3;
             else 
@@ -135,6 +115,8 @@ void kb_led_batt_number_show_matrix(void) {
              wave_offset = (wave_offset + 8) & 127;
         }
     } else if (es_stdby_pin_state == 2) {
+        internal_anim_timer = 0;
+        rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 180, 0);
         for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
             rgb_matrix_set_color(i, 0, 180, 0);
         }
@@ -142,10 +124,12 @@ void kb_led_batt_number_show_matrix(void) {
             rgb_matrix_set_color(LED_STOP_INDEX + i, 0, 180, 0);
         }
     } else {
+        internal_anim_timer = 0; 
         uint8_t led_count = (Keyboard_Info.Batt_Number + 9) / 10;
         if (led_count > 10) led_count = 10;
         uint8_t r, g, b;
         set_battery_color(Keyboard_Info.Batt_Number, &r, &g, &b);
+        rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, r, g, b);
         for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
             if ((i - BATT_LED_START_IDX) < led_count) {
                 rgb_matrix_set_color(i, r, g, b);
@@ -167,10 +151,7 @@ void kb_led_batt_number_show_matrix(void) {
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
-    if (User_Key_Batt_Num_Show) {
-        kb_led_batt_number_show_logo_circle();
-        kb_led_batt_number_show_matrix();
-    }
+    if (User_Key_Batt_Num_Show) kb_led_batt_number_show();
 #if LOGO_LED_ENABLE
     else if (kb_get_caps_lock_state()) {
         for (uint8_t i = 0; i < LOGO_LED_SIZE; i++) {
