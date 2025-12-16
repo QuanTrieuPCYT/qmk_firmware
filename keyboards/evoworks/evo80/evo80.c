@@ -35,6 +35,7 @@ void debounce_config_set_value(uint8_t *data) {
         case id_debounce_time:
         {
             Keyboard_Info.Debounce_Delay = *value_data;
+            Debounce_Function_Count = (_Bool)(1 - (Keyboard_Info.Debounce_Delay == 2));
             break;
         }
     }
