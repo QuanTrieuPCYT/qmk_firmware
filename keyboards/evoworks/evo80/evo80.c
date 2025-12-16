@@ -21,6 +21,76 @@
 #define BATT_LED_END_IDX   44
 #define BATT_LED_TOTAL     10
 
+enum via_debounce_value {
+    id_debounce_time   = 1
+};
+
+#ifdef VIA_ENABLE // via exclusive feature
+#include "via.h"
+void debounce_config_set_value(uint8_t *data) {
+    uint8_t *value_id   = &(data[0]);
+    uint8_t *value_data = &(data[1]);
+
+    switch ( *value_id ) {
+        case id_debounce_time:
+        {
+            Keyboard_Info.Debounce_Delay = *value_data;
+            break;
+        }
+    }
+}
+
+void debounce_config_get_value(uint8_t *data) {
+    uint8_t *value_id   = &(data[0]);
+    uint8_t *value_data = &(data[1]);
+
+    switch ( *value_id ) {
+        case id_debounce_time:
+        {
+            *value_data = Keyboard_Info.Debounce_Delay;
+            break;
+        }
+    }
+}
+
+void debounce_config_save(void) {
+    Save_Flash_Set();
+}
+
+void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
+    uint8_t *command_id        = &(data[0]);
+    uint8_t *channel_id        = &(data[1]);
+    uint8_t *value_id_and_data = &(data[2]);
+
+    if ( *channel_id == id_custom_channel ) {
+        switch ( *command_id ) {
+            case id_custom_set_value:
+            {
+                debounce_config_set_value(value_id_and_data);
+                break;
+            }
+            case id_custom_get_value:
+            {
+                debounce_config_get_value(value_id_and_data);
+                break;
+            }
+            case id_custom_save:
+            {
+                debounce_config_save();
+                break;
+            }
+            default:
+            {
+                *command_id = id_unhandled;
+                break;
+            }
+        }
+        return;
+    }
+    *command_id = id_unhandled;
+}
+#endif
+
 static const uint8_t wave_tab_led[128] = {
     0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 255, 255, 248, 244, 240, 236, 232, 228, 224, 220, 216, 212, 208, 204, 200, 196, 192, 188, 184, 180, 176, 172, 168, 164, 160, 156, 152, 148, 144, 140, 136, 132, 128, 124, 120, 116, 112, 108, 104, 100, 96, 92, 88, 84, 80, 76, 72, 68, 64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0
 };
