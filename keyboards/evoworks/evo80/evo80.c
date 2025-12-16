@@ -91,12 +91,12 @@ led_config_t g_led_config = { {
 void kb_led_batt_number_show(void) {
     static uint8_t internal_anim_timer = 0;
     if (es_stdby_pin_state == 1) {
+        internal_anim_timer++;
         if (Batt_Led_Count < 25) {
             rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 255, 255, 255);
         } else {
             rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 0, 0);
         }
-        internal_anim_timer++;
         if (internal_anim_timer >= 2) {
             internal_anim_timer = 0;
             if (User_Key_Batt_Count > 3) 
