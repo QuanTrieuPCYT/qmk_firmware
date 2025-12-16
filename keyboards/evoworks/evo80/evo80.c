@@ -161,7 +161,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         kb_led_batt_number_show_matrix();
     }
 #if LOGO_LED_ENABLE
-    if (kb_get_caps_lock_state()) {
+    else if (kb_get_caps_lock_state()) {
         for (uint8_t i = 0; i < LOGO_LED_SIZE; i++) {
             uint8_t current_index = LED_STOP_INDEX + i;
             
