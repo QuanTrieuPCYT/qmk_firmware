@@ -160,18 +160,17 @@ led_config_t g_led_config = { {
 } };
 
 void kb_led_batt_number_show(void) {
-    static uint8_t internal_anim_timer = 0;
+    static uint8_t last_batt_tick = 0;
     if (es_stdby_pin_state == 1) {
-        internal_anim_timer++;
         if (Batt_Led_Count < 25) {
             rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 255, 255, 255);
         } else {
             rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 0, 0);
         }
-        if (internal_anim_timer >= 2) {
-            internal_anim_timer = 0;
-            if (User_Key_Batt_Count > 3) 
-                User_Key_Batt_Count -= 3;
+        if (Batt_Led_Count != last_batt_tick) {
+            last_batt_tick = Batt_Led_Count;
+            if (User_Key_Batt_Count > 8) 
+                User_Key_Batt_Count -= 8;
             else 
                 User_Key_Batt_Count = 127;
         }
@@ -186,7 +185,6 @@ void kb_led_batt_number_show(void) {
              wave_offset = (wave_offset + 8) & 127;
         }
     } else if (es_stdby_pin_state == 2) {
-        internal_anim_timer = 0;
         rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 180, 0);
         for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
             rgb_matrix_set_color(i, 0, 180, 0);
@@ -195,7 +193,6 @@ void kb_led_batt_number_show(void) {
             rgb_matrix_set_color(LED_STOP_INDEX + i, 0, 180, 0);
         }
     } else {
-        internal_anim_timer = 0; 
         uint8_t led_count = (Keyboard_Info.Batt_Number + 9) / 10;
         if (led_count > 10) led_count = 10;
         uint8_t r, g, b;
