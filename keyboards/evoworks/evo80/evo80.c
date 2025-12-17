@@ -169,8 +169,8 @@ void kb_led_batt_number_show(void) {
         }
         if (Batt_Led_Count != last_batt_tick) {
             last_batt_tick = Batt_Led_Count;
-            if (User_Key_Batt_Count > 8) 
-                User_Key_Batt_Count -= 8;
+            if (User_Key_Batt_Count > 30) 
+                User_Key_Batt_Count -= 30;
             else 
                 User_Key_Batt_Count = 127;
         }
