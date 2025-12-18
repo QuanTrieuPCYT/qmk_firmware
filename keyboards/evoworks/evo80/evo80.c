@@ -21,15 +21,21 @@
 #define BATT_LED_END_IDX   44
 #define BATT_LED_TOTAL     10
 
+static inline uint8_t get_wave_value(uint8_t index) {
+    uint8_t x = index & 127;
+    if (x > 64) x = 128 - x;
+    return (x == 64) ? 255 : (x << 2);
+}
+
 #ifdef VIA_ENABLE // via exclusive feature
 #include "via.h"
 enum via_custom_config_value {
-    id_debounce_time   = 1,
-    id_nkro_toggle     = 2,
-    id_mac_mode        = 3,
-    id_win_lock        = 4,
-    id_rgb_toggle      = 5,
-    id_logo_toggle     = 6
+    id_debounce_time = 1,
+    id_nkro_toggle   = 2,
+    id_mac_mode      = 3,
+    id_win_lock      = 4,
+    id_rgb_toggle    = 5,
+    id_logo_toggle   = 6
 };
 
 void custom_config_set_value(uint8_t *data) {
@@ -40,21 +46,20 @@ void custom_config_set_value(uint8_t *data) {
         case id_debounce_time:
         {
             Keyboard_Info.Debounce_Delay = *value_data;
-            Debounce_Function_Count = (_Bool)(1 - (Keyboard_Info.Debounce_Delay == 2));
+            Debounce_Function_Count = (Keyboard_Info.Debounce_Delay != 2);
             break;
         }
         case id_nkro_toggle:
         {
-            if (keymap_config.raw < 0x80) {
+            bool nkro_enabled = (keymap_config.raw & 0x80);
+            if (!nkro_enabled) {
                 clear_keyboard();
-                keymap_config.raw = keymap_config.raw | 0x80;
+                keymap_config.raw |= 0x80;
                 Keyboard_Info.Nkro = 1;
-            } else {
-                if (0x7f < keymap_config.raw) {
-                    clear_keyboard();
-                    keymap_config.raw = keymap_config.raw & 0x7f;
-                    Keyboard_Info.Nkro = 0;
-                }
+            } else if (keymap_config.raw > 0x7F) {
+                clear_keyboard();
+                keymap_config.raw &= 0x7F;
+                Keyboard_Info.Nkro = 0;
             }
             break;
         }
@@ -65,13 +70,9 @@ void custom_config_set_value(uint8_t *data) {
             unregister_code(0xe3);
             unregister_code(0xe6);
             unregister_code(0xe7);
-            if (Keyboard_Info.Mac_Win_Mode) {
-                Keyboard_Info.Mac_Win_Mode = 0;
-                if (biton(layer_state) != 0) layer_move(0);
-            } else {
-                Keyboard_Info.Mac_Win_Mode = 1;
-                if (biton(layer_state) != 1) layer_move(1);
-            }
+            Keyboard_Info.Mac_Win_Mode = !Keyboard_Info.Mac_Win_Mode;
+            uint8_t target_layer = Keyboard_Info.Mac_Win_Mode ? 1 : 0;
+            if (biton(layer_state) != target_layer) layer_move(target_layer);
             break;
         }
         case id_win_lock:
@@ -88,25 +89,17 @@ void custom_config_set_value(uint8_t *data) {
         }
         case id_rgb_toggle:
         {
-            if (Keyboard_Info.Led_On_Off) {
-                Keyboard_Info.Led_On_Off = 0;
-                if (rgb_matrix_get_val() == 0) {
-                    rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), rgb_matrix_get_sat(), 0xB4);
-                }
-            } else {
-                Keyboard_Info.Led_On_Off = 1;
+            Keyboard_Info.Led_On_Off = !Keyboard_Info.Led_On_Off;
+            if (!Keyboard_Info.Led_On_Off && rgb_matrix_get_val() == 0) {
+                 rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), rgb_matrix_get_sat(), 0xB4);
             }
             break;
         }
         case id_logo_toggle:
         {
-            if (Keyboard_Info.Logo_On_Off) {
-                Keyboard_Info.Logo_On_Off = 0;
-                if (Keyboard_Info.Logo_Brightness == 0) {
-                    Keyboard_Info.Logo_Brightness = 105;
-                }
-            } else {
-                Keyboard_Info.Logo_On_Off = 1;
+            Keyboard_Info.Logo_On_Off = !Keyboard_Info.Logo_On_Off;
+            if (!Keyboard_Info.Logo_On_Off && Keyboard_Info.Logo_Brightness == 0) {
+                Keyboard_Info.Logo_Brightness = 105;
             }
             Logo_Init();
             break;
@@ -119,34 +112,12 @@ void custom_config_get_value(uint8_t *data) {
     uint8_t *value_data = &(data[1]);
 
     switch ( *value_id ) {
-        case id_debounce_time:
-        {
-            *value_data = Keyboard_Info.Debounce_Delay;
-            break;
-        }
-        case id_nkro_toggle:
-        {
-            *value_data = 1 - (keymap_config.raw < 0x80);
-            break;
-        }
-        case id_mac_mode:
-        {
-            *value_data = Keyboard_Info.Mac_Win_Mode;
-            break;
-        }
-        case id_win_lock:
-        {
-            *value_data = Keyboard_Info.Win_Lock;
-            break;
-        }
-        case id_rgb_toggle:
-        {
-            *value_data = 1 - (Keyboard_Info.Led_On_Off);
-        }
-        case id_logo_toggle:
-        {
-            *value_data = 1 - (Keyboard_Info.Logo_On_Off);
-        }
+        case id_debounce_time: *value_data = Keyboard_Info.Debounce_Delay; break;
+        case id_nkro_toggle:   *value_data = 1 - (keymap_config.raw < 0x80); break;
+        case id_mac_mode:      *value_data = Keyboard_Info.Mac_Win_Mode; break;
+        case id_win_lock:      *value_data = Keyboard_Info.Win_Lock; break;
+        case id_rgb_toggle:    *value_data = !Keyboard_Info.Led_On_Off; break;
+        case id_logo_toggle:   *value_data = !Keyboard_Info.Logo_On_Off; break;
     }
 }
 
@@ -161,36 +132,16 @@ void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
 
     if ( *channel_id == id_custom_channel ) {
         switch ( *command_id ) {
-            case id_custom_set_value:
-            {
-                custom_config_set_value(value_id_and_data);
-                break;
-            }
-            case id_custom_get_value:
-            {
-                custom_config_get_value(value_id_and_data);
-                break;
-            }
-            case id_custom_save:
-            {
-                custom_config_save();
-                break;
-            }
-            default:
-            {
-                *command_id = id_unhandled;
-                break;
-            }
+            case id_custom_set_value: custom_config_set_value(value_id_and_data); break;
+            case id_custom_get_value: custom_config_get_value(value_id_and_data); break;
+            case id_custom_save:      custom_config_save(); break;
+            default:                  *command_id = id_unhandled; break;
         }
         return;
     }
     *command_id = id_unhandled;
 }
 #endif
-
-static const uint8_t wave_tab_led[128] = {
-    0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80, 84, 88, 92, 96, 100, 104, 108, 112, 116, 120, 124, 128, 132, 136, 140, 144, 148, 152, 156, 160, 164, 168, 172, 176, 180, 184, 188, 192, 196, 200, 204, 208, 212, 216, 220, 224, 228, 232, 236, 240, 244, 248, 255, 255, 248, 244, 240, 236, 232, 228, 224, 220, 216, 212, 208, 204, 200, 196, 192, 188, 184, 180, 176, 172, 168, 164, 160, 156, 152, 148, 144, 140, 136, 132, 128, 124, 120, 116, 112, 108, 104, 100, 96, 92, 88, 84, 80, 76, 72, 68, 64, 60, 56, 52, 48, 44, 40, 36, 32, 28, 24, 20, 16, 12, 8, 4, 0
-};
 
 static inline bool kb_get_caps_lock_state(void) {
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
@@ -273,12 +224,12 @@ void kb_led_batt_number_show(void) {
         }
         uint8_t wave_offset = User_Key_Batt_Count;
         for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
-            rgb_matrix_set_color(i, 0, wave_tab_led[wave_offset], 0);
+            rgb_matrix_set_color(i, 0, get_wave_value(wave_offset), 0);
             wave_offset = (wave_offset + 8) & 127; 
         }
         wave_offset = User_Key_Batt_Count;
         for (uint8_t i = 0; i < LOGO_LED_SIZE - 1; i++) {
-             rgb_matrix_set_color(LED_STOP_INDEX + i, 0, wave_tab_led[wave_offset], 0);
+             rgb_matrix_set_color(LED_STOP_INDEX + i, 0, get_wave_value(wave_offset), 0);
              wave_offset = (wave_offset + 8) & 127;
         }
     } else if (es_stdby_pin_state == 2) {
@@ -295,20 +246,21 @@ void kb_led_batt_number_show(void) {
         uint8_t r, g, b;
         set_battery_color(Keyboard_Info.Batt_Number, &r, &g, &b);
         rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, r, g, b);
-        for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
-            if ((i - BATT_LED_START_IDX) < led_count) {
-                rgb_matrix_set_color(i, r, g, b);
-            } else {
-                rgb_matrix_set_color(i, 0, 0, 0);
-            }
+        uint8_t i = BATT_LED_START_IDX;
+        uint8_t limit = i + led_count;
+        for (; i < limit; i++) {
+            rgb_matrix_set_color(i, r, g, b);
+        }
+        for (; i <= BATT_LED_END_IDX; i++) {
+            rgb_matrix_set_color(i, 0, 0, 0);
         }
         uint8_t logo_lit = (Keyboard_Info.Batt_Number * (LOGO_LED_SIZE - 1) + 50) / 100;
         if (Keyboard_Info.Batt_Number > 0 && logo_lit == 0) logo_lit = 1; 
-        for (uint8_t i = 0; i < LOGO_LED_SIZE - 1; i++) {
-            if (i < logo_lit) {
-                rgb_matrix_set_color(LED_STOP_INDEX + i, r, g, b);
+        for (uint8_t j = 0; j < LOGO_LED_SIZE - 1; j++) {
+            if (j < logo_lit) {
+                rgb_matrix_set_color(LED_STOP_INDEX + j, r, g, b);
             } else {
-                rgb_matrix_set_color(LED_STOP_INDEX + i, 0, 0, 0);
+                rgb_matrix_set_color(LED_STOP_INDEX + j, 0, 0, 0);
             }
         }
     }
@@ -316,14 +268,19 @@ void kb_led_batt_number_show(void) {
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
-    if (User_Key_Batt_Num_Show) kb_led_batt_number_show();
+    if (User_Key_Batt_Num_Show) {
+        kb_led_batt_number_show();
+    } 
 #if LOGO_LED_ENABLE
     else if (kb_get_caps_lock_state()) {
-        for (uint8_t i = 0; i < LOGO_LED_SIZE; i++) {
-            uint8_t current_index = LED_STOP_INDEX + i;
-            
-            if (current_index >= led_min && current_index <= led_max) {
-                rgb_matrix_set_color(current_index, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+        uint8_t start_idx = LED_STOP_INDEX;
+        uint8_t end_idx = LED_STOP_INDEX + LOGO_LED_SIZE;
+        if (end_idx >= led_min && start_idx <= led_max) {
+            for (uint8_t i = 0; i < LOGO_LED_SIZE; i++) {
+                uint8_t current_index = start_idx + i;
+                if (current_index >= led_min && current_index <= led_max) {
+                    rgb_matrix_set_color(current_index, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+                }
             }
         }
     }
@@ -333,7 +290,6 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
 void notify_usb_device_state_change_user(enum usb_device_state usb_device_state) {
     bool is_configured = (usb_device_state == USB_DEVICE_STATE_CONFIGURED);
-    
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
         Usb_If_Ok = is_configured;
         Usb_If_Ok_Led = is_configured;
@@ -351,12 +307,10 @@ void housekeeping_task_user(void) {
         User_Keyboard_Reset();
         User_State_Fulfill_Flag = 0x00;
     }
-    
     if (WIN_MAC_CHANGE) {
         WIN_MAC_CHANGE = false;
         User_Mac_Win_Change();
     }
-
     es_chibios_user_idle_loop_hook();
 }
 
