@@ -228,7 +228,7 @@ void kb_led_batt_number_show(void) {
         } else {
             rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 0, 0);
         }
-        if (timer_elapsed(last_batt_timer) >= 4) {
+        if (timer_elapsed(last_batt_timer) >= (Keyboard_Info.Led_On_Off ? 8 : 4)) {
             last_batt_timer = timer_read();
             if (User_Key_Batt_Count > 3) {
                 User_Key_Batt_Count -= 3;
