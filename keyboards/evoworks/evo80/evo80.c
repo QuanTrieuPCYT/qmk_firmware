@@ -21,13 +21,16 @@
 #define BATT_LED_END_IDX   44
 #define BATT_LED_TOTAL     10
 
-enum via_debounce_value {
-    id_debounce_time   = 1
-};
-
 #ifdef VIA_ENABLE // via exclusive feature
 #include "via.h"
-void debounce_config_set_value(uint8_t *data) {
+enum via_custom_config_value {
+    id_debounce_time   = 1,
+    id_nkro_toggle     = 2,
+    id_mac_mode        = 3,
+    id_win_lock        = 4
+};
+
+void custom_config_set_value(uint8_t *data) {
     uint8_t *value_id   = &(data[0]);
     uint8_t *value_data = &(data[1]);
 
@@ -38,10 +41,58 @@ void debounce_config_set_value(uint8_t *data) {
             Debounce_Function_Count = (_Bool)(1 - (Keyboard_Info.Debounce_Delay == 2));
             break;
         }
+        case id_nkro_toggle:
+        {
+            if (keymap_config.raw < 0x80) {
+                clear_keyboard();
+                keymap_config.raw = keymap_config.raw | 0x80;
+                Keyboard_Info.Nkro = 1;
+            } else {
+                if (0x7f < keymap_config.raw) {
+                    clear_keyboard();
+                    keymap_config.raw = keymap_config.raw & 0x7f;
+                    Keyboard_Info.Nkro = 0;
+                }
+            }
+            break;
+        }
+        case id_mac_mode:
+        {
+            if (Keyboard_Info.Mac_Win_Mode) {
+                Keyboard_Info.Mac_Win_Mode = 0;
+                unregister_code(0x65);
+                unregister_code(0xe2);
+                unregister_code(0xe3);
+                unregister_code(0xe6);
+                unregister_code(0xe7);
+                if (biton(layer_state) != 0) layer_move(0);
+            } else {
+                Keyboard_Info.Mac_Win_Mode = 1;
+                unregister_code(0x65);
+                unregister_code(0xe2);
+                unregister_code(0xe3);
+                unregister_code(0xe6);
+                unregister_code(0xe7);
+                if (biton(layer_state) != 1) layer_move(1);
+            }
+            break;
+        }
+        case id_win_lock:
+        {
+            if (Keyboard_Info.Win_Lock) {
+                Keyboard_Info.Win_Lock = 0;
+            } else if (Keyboard_Info.Mac_Win_Mode == 0) {
+                Keyboard_Info.Win_Lock = 1;
+                unregister_code(0xe3);
+                unregister_code(0xe7);
+                unregister_code(0x65);
+            }
+            break;
+        }
     }
 }
 
-void debounce_config_get_value(uint8_t *data) {
+void custom_config_get_value(uint8_t *data) {
     uint8_t *value_id   = &(data[0]);
     uint8_t *value_data = &(data[1]);
 
@@ -51,10 +102,25 @@ void debounce_config_get_value(uint8_t *data) {
             *value_data = Keyboard_Info.Debounce_Delay;
             break;
         }
+        case id_nkro_toggle:
+        {
+            *value_data = 1 - (keymap_config.raw < 0x80);
+            break;
+        }
+        case id_mac_mode:
+        {
+            *value_data = Keyboard_Info.Mac_Win_Mode;
+            break;
+        }
+        case id_win_lock:
+        {
+            *value_data = Keyboard_Info.Win_Lock;
+            break;
+        }
     }
 }
 
-void debounce_config_save(void) {
+void custom_config_save(void) {
     Save_Flash_Set();
 }
 
@@ -67,17 +133,17 @@ void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
         switch ( *command_id ) {
             case id_custom_set_value:
             {
-                debounce_config_set_value(value_id_and_data);
+                custom_config_set_value(value_id_and_data);
                 break;
             }
             case id_custom_get_value:
             {
-                debounce_config_get_value(value_id_and_data);
+                custom_config_get_value(value_id_and_data);
                 break;
             }
             case id_custom_save:
             {
-                debounce_config_save();
+                custom_config_save();
                 break;
             }
             default:
@@ -132,12 +198,12 @@ void matrix_output_select_delay(void) {}
 void matrix_output_unselect_delay(uint8_t line, bool key_pressed) {}
 
 led_config_t g_led_config = { {
-	{ 0        , 1        , 2        , 3        , 4        , 5        , 6        , 7        , 8        , 9        , 10       , 11       , 12       , 14       , 15       , 16        },
-	{ 17       , 18       , 19       , 20       , 21       , 22       , 23       , 24       , 25       , 26       , 27       , 28       , 29       , 30       , 31       , 32        },
-	{ 34       , 35       , 36       , 37       , 38       , 39       , 40       , 41       , 42       , 43       , 44       , 45       , 46       , 47       , 49       , 50        },
-	{ 52       , 54       , 55       , 56       , 57       , 58       , 59       , 60       , 61       , 62       , 63       , 64       , 65       , 66       , 33       , 51        },
-	{ 67       , NO_LED   , 68       , 69       , 70       , 71       , 72       , 73       , 74       , 75       , 76       , 77       , 13       , 78       , 79       , NO_LED    },
-	{ 80       , 81       , 82       , 53       , NO_LED   , 83       , NO_LED   , NO_LED   , 48       , 84       , 85       , 86       , 87       , 88       , 89       , 90        }
+    { 0        , 1        , 2        , 3        , 4        , 5        , 6        , 7        , 8        , 9        , 10       , 11       , 12       , 14       , 15       , 16        },
+    { 17       , 18       , 19       , 20       , 21       , 22       , 23       , 24       , 25       , 26       , 27       , 28       , 29       , 30       , 31       , 32        },
+    { 34       , 35       , 36       , 37       , 38       , 39       , 40       , 41       , 42       , 43       , 44       , 45       , 46       , 47       , 49       , 50        },
+    { 52       , 54       , 55       , 56       , 57       , 58       , 59       , 60       , 61       , 62       , 63       , 64       , 65       , 66       , 33       , 51        },
+    { 67       , NO_LED   , 68       , 69       , 70       , 71       , 72       , 73       , 74       , 75       , 76       , 77       , 13       , 78       , 79       , NO_LED    },
+    { 80       , 81       , 82       , 53       , NO_LED   , 83       , NO_LED   , NO_LED   , 48       , 84       , 85       , 86       , 87       , 88       , 89       , 90        }
 },{
     // "Fine-tuned" complex configuration
     { 8, 7},    { 21, 7},   { 34, 7},   { 47, 7},   { 60, 7},   { 73, 7},  { 86, 7},   { 99, 7},  { 112, 7},  { 125, 7},  { 138, 7},  { 151, 7},  { 164, 7},  { 177, 7},  { 190, 7},  { 203, 7},  { 216, 7}, 
