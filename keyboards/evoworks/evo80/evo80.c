@@ -160,19 +160,20 @@ led_config_t g_led_config = { {
 } };
 
 void kb_led_batt_number_show(void) {
-    static uint8_t last_batt_tick = 0;
+    static uint16_t last_batt_timer = 0;
     if (es_stdby_pin_state == 1) {
         if (Batt_Led_Count < 25) {
             rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 255, 255, 255);
         } else {
             rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 0, 0);
         }
-        if (Batt_Led_Count != last_batt_tick) {
-            last_batt_tick = Batt_Led_Count;
-            if (User_Key_Batt_Count > 30) 
-                User_Key_Batt_Count -= 30;
-            else 
+        if (timer_elapsed(last_batt_timer) >= 2) {
+            last_batt_timer = timer_read();
+            if (User_Key_Batt_Count > 3) {
+                User_Key_Batt_Count -= 3;
+            } else {
                 User_Key_Batt_Count = 127;
+            }
         }
         uint8_t wave_offset = User_Key_Batt_Count;
         for (uint8_t i = BATT_LED_START_IDX; i <= BATT_LED_END_IDX; i++) {
