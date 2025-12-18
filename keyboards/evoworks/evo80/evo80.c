@@ -27,7 +27,9 @@ enum via_custom_config_value {
     id_debounce_time   = 1,
     id_nkro_toggle     = 2,
     id_mac_mode        = 3,
-    id_win_lock        = 4
+    id_win_lock        = 4,
+    id_rgb_toggle      = 5,
+    id_logo_toggle     = 6
 };
 
 void custom_config_set_value(uint8_t *data) {
@@ -84,6 +86,31 @@ void custom_config_set_value(uint8_t *data) {
             }
             break;
         }
+        case id_rgb_toggle:
+        {
+            if (Keyboard_Info.Led_On_Off) {
+                Keyboard_Info.Led_On_Off = 0;
+                if (rgb_matrix_get_val() == 0) {
+                    rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), rgb_matrix_get_sat(), 0xB4);
+                }
+            } else {
+                Keyboard_Info.Led_On_Off = 1;
+            }
+            break;
+        }
+        case id_logo_toggle:
+        {
+            if (Keyboard_Info.Logo_On_Off) {
+                Keyboard_Info.Logo_On_Off = 0;
+                if (Keyboard_Info.Logo_Brightness == 0) {
+                    Keyboard_Info.Logo_Brightness = 105;
+                }
+            } else {
+                Keyboard_Info.Logo_On_Off = 1;
+            }
+            Logo_Init();
+            break;
+        }
     }
 }
 
@@ -111,6 +138,14 @@ void custom_config_get_value(uint8_t *data) {
         {
             *value_data = Keyboard_Info.Win_Lock;
             break;
+        }
+        case id_rgb_toggle:
+        {
+            *value_data = 1 - (Keyboard_Info.Led_On_Off);
+        }
+        case id_logo_toggle:
+        {
+            *value_data = 1 - (Keyboard_Info.Logo_On_Off);
         }
     }
 }
