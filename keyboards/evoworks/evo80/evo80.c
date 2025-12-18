@@ -58,21 +58,16 @@ void custom_config_set_value(uint8_t *data) {
         }
         case id_mac_mode:
         {
+            unregister_code(0x65);
+            unregister_code(0xe2);
+            unregister_code(0xe3);
+            unregister_code(0xe6);
+            unregister_code(0xe7);
             if (Keyboard_Info.Mac_Win_Mode) {
                 Keyboard_Info.Mac_Win_Mode = 0;
-                unregister_code(0x65);
-                unregister_code(0xe2);
-                unregister_code(0xe3);
-                unregister_code(0xe6);
-                unregister_code(0xe7);
                 if (biton(layer_state) != 0) layer_move(0);
             } else {
                 Keyboard_Info.Mac_Win_Mode = 1;
-                unregister_code(0x65);
-                unregister_code(0xe2);
-                unregister_code(0xe3);
-                unregister_code(0xe6);
-                unregister_code(0xe7);
                 if (biton(layer_state) != 1) layer_move(1);
             }
             break;
