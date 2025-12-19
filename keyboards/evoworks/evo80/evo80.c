@@ -52,7 +52,7 @@ void custom_config_set_value(uint8_t *data) {
         case id_nkro_toggle:
         {
             bool nkro_enabled = (keymap_config.raw & 0x80);
-            if (!nkro_enabled) {
+            if (1 - nkro_enabled) {
                 clear_keyboard();
                 keymap_config.raw |= 0x80;
                 Keyboard_Info.Nkro = 1;
@@ -70,7 +70,7 @@ void custom_config_set_value(uint8_t *data) {
             unregister_code(0xe3);
             unregister_code(0xe6);
             unregister_code(0xe7);
-            Keyboard_Info.Mac_Win_Mode = !Keyboard_Info.Mac_Win_Mode;
+            Keyboard_Info.Mac_Win_Mode = 1 - Keyboard_Info.Mac_Win_Mode;
             uint8_t target_layer = Keyboard_Info.Mac_Win_Mode ? 1 : 0;
             if (biton(layer_state) != target_layer) layer_move(target_layer);
             break;
@@ -89,16 +89,16 @@ void custom_config_set_value(uint8_t *data) {
         }
         case id_rgb_toggle:
         {
-            Keyboard_Info.Led_On_Off = !Keyboard_Info.Led_On_Off;
-            if (!Keyboard_Info.Led_On_Off && rgb_matrix_get_val() == 0) {
+            Keyboard_Info.Led_On_Off = 1 - Keyboard_Info.Led_On_Off;
+            if ((1 - Keyboard_Info.Led_On_Off) && rgb_matrix_get_val() == 0) {
                  rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), rgb_matrix_get_sat(), 0xB4);
             }
             break;
         }
         case id_logo_toggle:
         {
-            Keyboard_Info.Logo_On_Off = !Keyboard_Info.Logo_On_Off;
-            if (!Keyboard_Info.Logo_On_Off && Keyboard_Info.Logo_Brightness == 0) {
+            Keyboard_Info.Logo_On_Off = 1 - Keyboard_Info.Logo_On_Off;
+            if ((1 - Keyboard_Info.Logo_On_Off) && Keyboard_Info.Logo_Brightness == 0) {
                 Keyboard_Info.Logo_Brightness = 105;
             }
             Logo_Init();
@@ -116,8 +116,8 @@ void custom_config_get_value(uint8_t *data) {
         case id_nkro_toggle:   *value_data = 1 - (keymap_config.raw < 0x80); break;
         case id_mac_mode:      *value_data = Keyboard_Info.Mac_Win_Mode; break;
         case id_win_lock:      *value_data = Keyboard_Info.Win_Lock; break;
-        case id_rgb_toggle:    *value_data = !Keyboard_Info.Led_On_Off; break;
-        case id_logo_toggle:   *value_data = !Keyboard_Info.Logo_On_Off; break;
+        case id_rgb_toggle:    *value_data = 1 - Keyboard_Info.Led_On_Off; break;
+        case id_logo_toggle:   *value_data = 1 - Keyboard_Info.Logo_On_Off; break;
     }
 }
 
@@ -296,7 +296,7 @@ void notify_usb_device_state_change_user(enum usb_device_state usb_device_state)
         Usb_If_Ok = is_configured;
         Usb_If_Ok_Led = is_configured;
         if (is_configured) Usb_If_Ok_Delay = 0;
-        Usb_Suspend_Sig = !is_configured;
+        Usb_Suspend_Sig = 1 - is_configured;
     } else {
         Usb_If_Ok = false;
         Usb_If_Ok_Led = false;
