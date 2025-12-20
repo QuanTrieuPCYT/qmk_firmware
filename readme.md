@@ -1,6 +1,19 @@
-# THIS IS THE DEVELOP BRANCH
+# cutiepc's Evoworks Evo80 QMK Firmware
 
-Warning- This is the `develop` branch of QMK Firmware. You may encounter broken code here. Please see [Breaking Changes](https://docs.qmk.fm/#/breaking_changes) for more information.
+**WARNING: Use this firmware at your own risk! I am not responsible if your keyboard breaks after flashing this firmware!**
+
+This repo holds the codebase of the firmware of my Evoworks Evo80. Changes have been made on top of the manufacturer's codebase to suit my personal needs, including:
+- Changed project structure to be more clean
+- Made adjustment to default keymaps to better suit my needs (so I can start using the board right away after flashing!)
+- Caps Lock indicator now extends to the RGB Logo strip
+- Battery indicator now also shows from the Q key to the P key (10 LEDs), and also the RGB strip (the strip shows the progress, the circle LED mirrors the state of the Esc key)
+- Enabled link-time optimizations, reworked and refactored code and logic for better performance
+- Implemented logic for extra configurations (light toggles, debounce configuration, NKRO, Windows key Lock and Mac mode) to the VIA configuration GUI (new channel logics and custom config values). Changes are live on my personal forks of VIA's [keyboards](https://github.com/QuanTrieuPCYT/via-keyboards) and [app](https://github.com/QuanTrieuPCYT/via-app) repositories
+
+To-do:
+- Properly reverse engineer and draft a fully open sourced implementation of the `rdr_common` library.
+
+Below is the original description of the QMK Firmware repository:
 
 # Quantum Mechanical Keyboard Firmware
 
