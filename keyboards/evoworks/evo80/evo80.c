@@ -49,13 +49,10 @@ enum via_custom_config_value {
 };
 
 void custom_config_set_value(uint8_t *data) {
-    uint8_t value_id   = data[0];
-    uint8_t value_data = data[1];
-
-    switch (value_id) {
+    switch (data[0]) {
         case id_debounce_time:
         {
-            Keyboard_Info.Debounce_Delay = value_data;
+            Keyboard_Info.Debounce_Delay = data[1];
             Debounce_Function_Count = (Keyboard_Info.Debounce_Delay != 2);
             break;
         }
@@ -113,9 +110,8 @@ void custom_config_set_value(uint8_t *data) {
 }
 
 void custom_config_get_value(uint8_t *data) {
-    uint8_t value_id = data[0];
     uint8_t *result  = &data[1];
-    switch (value_id) {
+    switch (data[0]) {
         case id_debounce_time: *result = Keyboard_Info.Debounce_Delay; break;
         case id_nkro_toggle:   *result = Keyboard_Info.Nkro; break;
         case id_mac_mode:      *result = Keyboard_Info.Mac_Win_Mode; break;
