@@ -22,6 +22,11 @@
 #define BATT_LED_TOTAL     10
 #define BATT_LED_MAX_WAVE  127
 
+#ifdef LTO_ENABLED
+__attribute__((weak, noinline)) void bootloader_jump(void) {}
+__attribute__((weak, noinline)) void mcu_reset(void) {}
+#endif
+
 static inline uint8_t get_wave_value(uint8_t index) {
     uint8_t x = index & 127;
     if (x & 64) x = 128 - x; 
