@@ -121,8 +121,8 @@ void custom_config_get_value(uint8_t *data) {
         case id_nkro_toggle:   *result = Keyboard_Info.Nkro; break;
         case id_mac_mode:      *result = Keyboard_Info.Mac_Win_Mode; break;
         case id_win_lock:      *result = Keyboard_Info.Win_Lock; break;
-        case id_rgb_toggle:    *result = Keyboard_Info.Led_On_Off; break;
-        case id_logo_toggle:   *result = Keyboard_Info.Logo_On_Off; break;
+        case id_rgb_toggle:    *result = !Keyboard_Info.Led_On_Off; break;
+        case id_logo_toggle:   *result = !Keyboard_Info.Logo_On_Off; break;
     }
 }
 
