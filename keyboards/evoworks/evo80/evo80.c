@@ -214,7 +214,9 @@ void kb_led_batt_number_show(void) {
     const bool is_full     = (pin_state == 2);
     uint8_t r, g, b;
     uint8_t batt_len_lit;
+#if LOGO_LED_ENABLE
     uint8_t logo_len_lit;
+#endif
     uint8_t wave_offset = 0;
     bool use_wave = false;
     if (is_charging) {
@@ -234,8 +236,10 @@ void kb_led_batt_number_show(void) {
     if (is_full) {
         r = 0; g = 180; b = 0;
         batt_len_lit = BATT_LED_TOTAL;
+#if LOGO_LED_ENABLE
         logo_len_lit = LOGO_LED_SIZE - 1;
-        rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 180, 0); 
+        rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, 0, 180, 0);
+#endif
     } else {
         uint8_t c_idx = 3;
         if (current_batt <= 10) c_idx = 0;
@@ -246,6 +250,7 @@ void kb_led_batt_number_show(void) {
         b = BATT_COLOR_LUT[c_idx][2];
         batt_len_lit = fast_div10(current_batt + 9);
         if (batt_len_lit > BATT_LED_TOTAL) batt_len_lit = BATT_LED_TOTAL;
+#if LOGO_LED_ENABLE
         uint16_t logo_calc = current_batt * (LOGO_LED_SIZE - 1) + 50;
         logo_len_lit = fast_div100(logo_calc); 
         if (current_batt > 0 && logo_len_lit == 0) logo_len_lit = 1;
@@ -255,6 +260,7 @@ void kb_led_batt_number_show(void) {
         } else {
             rgb_matrix_set_color(LED_STOP_INDEX + LOGO_LED_SIZE - 1, r, g, b);
         }
+#endif
     }
     uint8_t current_led_idx = BATT_LED_START_IDX;
     uint8_t cur_wave = wave_offset;
@@ -274,6 +280,7 @@ void kb_led_batt_number_show(void) {
         current_led_idx++;
         count++;
     } while (count < BATT_LED_TOTAL);
+#if LOGO_LED_ENABLE
     current_led_idx = LED_STOP_INDEX;
     cur_wave = wave_offset;
     const uint8_t logo_limit = LOGO_LED_SIZE - 1;
@@ -295,6 +302,7 @@ void kb_led_batt_number_show(void) {
             count++;
         } while (count < logo_limit);
     }
+#endif
 }
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
