@@ -145,6 +145,7 @@ void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
 }
 #endif
 
+/*
 static inline bool kb_get_caps_lock_state(void) {
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
         return host_keyboard_led_state().caps_lock && Usb_If_Ok_Led;
@@ -152,12 +153,6 @@ static inline bool kb_get_caps_lock_state(void) {
     return (Keyboard_Status.System_Led_Status & 0x02);
 }
 
-static const uint8_t BATT_COLOR_LUT[4][3] = {
-    {180, 0,   0},
-    {180, 180, 0},
-    {0,   0,   180},
-    {0,   180, 0}
-};
 
 bool led_update_user(led_t led_state) {
     if (Keyboard_Info.Key_Mode != QMK_USB_MODE) {
@@ -170,6 +165,14 @@ bool led_update_user(led_t led_state) {
     rgb_matrix_set_flags(LED_FLAG_ALL);
     return true;
 }
+*/
+
+static const uint8_t BATT_COLOR_LUT[4][3] = {
+    {180, 0,   0},
+    {180, 180, 0},
+    {0,   0,   180},
+    {0,   180, 0}
+};
 
 void matrix_io_delay(void) {}
 void matrix_output_select_delay(void) {}
@@ -300,7 +303,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         kb_led_batt_number_show();
     } 
 #if LOGO_LED_ENABLE
-    else if (kb_get_caps_lock_state()) {
+    else if (host_keyboard_led_state().caps_lock && Usb_If_Ok_Led) {
         uint8_t start_idx = LED_STOP_INDEX;
         uint8_t end_idx = LED_STOP_INDEX + LOGO_LED_SIZE;
         if (end_idx >= led_min && start_idx <= led_max) {
