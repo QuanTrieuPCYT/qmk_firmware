@@ -145,20 +145,6 @@ void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
 }
 #endif
 
-/*
-bool led_update_user(led_t led_state) {
-    if (Keyboard_Info.Key_Mode != QMK_USB_MODE) {
-        if (led_state.caps_lock) {
-            Keyboard_Status.System_Led_Status |= 0x02;
-        } else {
-            Keyboard_Status.System_Led_Status &= ~0x02;
-        }
-    }
-    rgb_matrix_set_flags(LED_FLAG_ALL);
-    return true;
-}
-*/
-
 static const uint8_t BATT_COLOR_LUT[4][3] = {
     {180, 0,   0},
     {180, 180, 0},
