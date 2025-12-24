@@ -17,6 +17,7 @@
 
 #include "../../../lib/rdr_lib/rdr_common.h"
 #include "features/layer_lock.h"
+#include "features/select_word.h"
 
 #define BATT_LED_START_IDX 35
 #define BATT_LED_END_IDX   44
@@ -355,6 +356,9 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     Usb_Change_Mode_Wakeup = false;
 #ifdef LAYER_LOCK_ENABLE
     if (!process_layer_lock(keycode, record, QK_LAYER_LOCK)) { return false; }
+#endif
+#ifdef SELECT_WORD_ENABLE
+    if (!process_select_word(keycode, record)) { return false; }
 #endif
     return Key_Value_Dispose(keycode, record);
 }

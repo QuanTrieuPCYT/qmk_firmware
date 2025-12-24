@@ -78,6 +78,7 @@
 
 // custom keycodes
 #define LAYER_LOCK_ENABLE
+#define SELECT_WORD_ENABLE
 #define QK_LAYER_LOCK 0x7C7B
 #define QK_LLCK QK_LAYER_LOCK
 #define QK_SELECT_WORD 0x7C7C

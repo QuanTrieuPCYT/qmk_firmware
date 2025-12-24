@@ -22,7 +22,7 @@
 
 #include "select_word.h"
 #include "../config.h"
-#include "../../../lib/rdr_lib/rdr_common.h"
+#include "../../../../lib/rdr_lib/rdr_common.h"
 
 #if !defined(IS_QK_MOD_TAP)
 // Attempt to detect out-of-date QMK installation, which would fail with
@@ -61,7 +61,7 @@ __attribute__((weak)) bool select_word_host_is_mac(void) {
 #  ifdef SELECT_WORD_OS_MAC
   return true;
 #  else
-  return IS_LAYER_ON(1) || IS_LAYER_ON(3);
+  return Keyboard_Info.Mac_Win_Mode; // using firmware's native Mac mode
   //return false;
 #  endif  // SELECT_WORD_OS_MAC
 }
