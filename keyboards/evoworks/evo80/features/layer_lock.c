@@ -123,9 +123,9 @@ void layer_lock_invert(uint8_t layer) {
   } else {  // Layer is being unlocked.
     layer_off(layer);
   }
+  layer_lock_set_user(locked_layers ^= mask);
   if (is_layer_locked(2) || is_layer_locked(3)) Key_Fn_Status = true;
   else Key_Fn_Status = false;
-  layer_lock_set_user(locked_layers ^= mask);
 }
 
 // Implement layer_lock_on/off by deferring to layer_lock_invert.
