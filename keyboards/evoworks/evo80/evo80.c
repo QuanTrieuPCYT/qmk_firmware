@@ -498,5 +498,30 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         host_consumer_send(record->event.pressed ? 0x0221 : 0);
         return false;
     }
+    if (keycode == QK_CLEAR_EEPROM) {
+        if (!(record->event.pressed)) return true;
+        Keyboard_Info.Debounce_Delay = 5;
+        Keyboard_Info.Logo_Brightness = 60;
+        Keyboard_Info.Logo_Speed = 1;
+        Keyboard_Info.Nkro = 1;
+        Keyboard_Info.Mac_Win_Mode = 0;
+        Keyboard_Info.Win_Lock = 0;
+        Keyboard_Info.Led_On_Off = 0;
+        Keyboard_Info.Logo_On_Off = 0;
+        Keyboard_Info.Logo_Mode = 2;
+        Keyboard_Info.Logo_Colour = 213;
+        Keyboard_Info.Logo_Saturation = 54;
+        Logo_Init();
+        Reset_Save_Flash = true;
+        eeprom_write_block_user(&Keyboard_Info, (void *)0x0, 0xF);
+        Debounce_Delay = Keyboard_Info.Debounce_Delay;
+        if (Debounce_Delay != 2) {
+             Debounce_Function_Count = true;
+        } else {
+             Debounce_Function_Count = false;
+        }
+        Reset_Save_Flash = false;
+        return true;
+    }
     return Key_Value_Dispose(keycode, record);
 }
