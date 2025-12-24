@@ -16,6 +16,7 @@
  */
 
 #include "../../../lib/rdr_lib/rdr_common.h"
+#include "features/layer_lock.h"
 
 #define BATT_LED_START_IDX 35
 #define BATT_LED_END_IDX   44
@@ -348,5 +349,6 @@ void keyboard_post_init_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     Usb_Change_Mode_Delay = 0;
     Usb_Change_Mode_Wakeup = false;
+    if (!process_layer_lock(keycode, record, QK_LAYER_LOCK)) { return false; }
     return Key_Value_Dispose(keycode, record);
 }

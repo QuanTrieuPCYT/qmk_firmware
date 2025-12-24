@@ -17,3 +17,4 @@ MUSIC_ENABLE = no
 OLED_ENABLE = no
 
 DEBOUNCE_TYPE = asym_eager_defer_pk
+SRC += features/layer_lock.c

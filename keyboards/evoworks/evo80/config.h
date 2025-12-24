@@ -66,6 +66,7 @@
 #define NOP_FUDGE 0.4
 #endif
 
+// rgb matrix-related config
 #define RGB_MATRIX_LED_COUNT 96
 #define RGB_MATRIX_KEYPRESSES
 #define RGB_MATRIX_KEYRELEASES
@@ -74,3 +75,7 @@
 #define RGB_MATRIX_LED_FLUSH_LIMIT 16
 #define RGB_MATRIX_MAXIMUM_BRIGHTNESS 180
 #define RGB_MATRIX_SLEEP
+
+// custom keycodes
+#define QK_LAYER_LOCK 0x7C7B
+#define QK_LLCK QK_LAYER_LOCK
