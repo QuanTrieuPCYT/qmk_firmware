@@ -360,5 +360,21 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 #ifdef SELECT_WORD_ENABLE
     if (!process_select_word(keycode, record)) { return false; }
 #endif
+    switch (keycode) {
+        case MAC_SPT:
+            if (record->event.pressed) {
+                host_consumer_send(0x0221);
+            } else {
+                host_consumer_send(0);
+            }
+            break;
+        case MAC_DND:
+            if (record->event.pressed) {
+                host_system_send(0x9b);
+            } else {
+                host_system_send(0);
+            }
+            break;
+    }
     return Key_Value_Dispose(keycode, record);
 }
