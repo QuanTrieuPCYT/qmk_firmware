@@ -77,5 +77,8 @@
 #define RGB_MATRIX_SLEEP
 
 // custom keycodes
+#define LAYER_LOCK_ENABLE
 #define QK_LAYER_LOCK 0x7C7B
 #define QK_LLCK QK_LAYER_LOCK
+#define QK_SELECT_WORD 0x7C7C
+#define QK_SELW QK_SELECT_WORD

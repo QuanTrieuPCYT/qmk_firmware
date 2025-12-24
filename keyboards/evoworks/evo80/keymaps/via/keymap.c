@@ -39,7 +39,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         QK_RBT,  LOGO_TOG, KC_W,     KC_E,        KC_R,         KC_T,     KC_Y,      KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,  MC_4,     KC_END,   KC_PGDN,
         KC_CAPS, KC_CAPS,  KC_A,     KC_S,        KC_D,         KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  KC_K42,   MC_0,     MC_0,
         KC_LSFT, KC_K45,   RGB_RTOG, KC_X,        KC_C,         KC_V,     QK_BAT,    KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT,  KC_UP,
-        KC_LCTL, QK_WLO,   KC_LALT,                             KC_SPC,                                  KC_RALT,  KC_RGUI,  KC_NO,    KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
+        KC_LCTL, QK_WLO,   KC_LALT,                             KC_SPC,                                  QK_SELW,  KC_RGUI,  KC_NO,    KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
     ),
     [3] = LAYOUT_tkl_ansi(
         KC_ESC,  KC_F1,    KC_F2,    KC_F3,       KC_F4,        KC_F5,    KC_F6,     KC_F7,    KC_F8,    KC_F9,    KC_F10,   KC_F11,   KC_F12,   MC_1,     MC_2,     QK_LLCK,  KC_PAUS,
@@ -47,6 +47,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         QK_RBT,  LOGO_TOG, KC_W,     KC_E,        KC_R,         KC_T,     KC_Y,      KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,  MC_4,     KC_END,   KC_PGDN,
         KC_CAPS, KC_CAPS,  KC_A,     KC_S,        KC_D,         KC_F,     KC_G,      KC_H,     KC_J,     KC_K,     KC_L,     KC_SCLN,  KC_QUOT,  KC_K42,   MC_0,     MC_0,
         KC_LSFT, KC_K45,   RGB_RTOG, KC_X,        KC_C,         KC_V,     QK_BAT,    KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT,  KC_UP,
-        KC_LCTL, QK_WLO,   KC_LGUI,                             KC_SPC,                                  KC_RGUI,  KC_RALT,  KC_NO,    KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
+        KC_LCTL, QK_WLO,   KC_LGUI,                             KC_SPC,                                  KC_RGUI,  QK_SELW,  KC_NO,    KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
     )
 };

@@ -297,7 +297,11 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         kb_led_batt_number_show();
     } 
 #if LOGO_LED_ENABLE
+#ifdef LAYER_LOCK_ENABLE
     bool layer_lock = is_layer_locked(2) || is_layer_locked(3);
+#else
+    bool layer_lock = false;
+#endif
     if (layer_lock || kb_get_caps_lock_state()) {
         uint8_t start = (LED_STOP_INDEX > led_min) ? LED_STOP_INDEX : led_min;
         uint8_t end   = (LED_STOP_INDEX + LOGO_LED_SIZE < led_max) ? (LED_STOP_INDEX + LOGO_LED_SIZE) : led_max;
@@ -349,6 +353,8 @@ void keyboard_post_init_user(void) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     Usb_Change_Mode_Delay = 0;
     Usb_Change_Mode_Wakeup = false;
+#ifdef LAYER_LOCK_ENABLE
     if (!process_layer_lock(keycode, record, QK_LAYER_LOCK)) { return false; }
+#endif
     return Key_Value_Dispose(keycode, record);
 }

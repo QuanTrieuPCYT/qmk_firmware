@@ -18,3 +18,4 @@ OLED_ENABLE = no
 
 DEBOUNCE_TYPE = asym_eager_defer_pk
 SRC += features/layer_lock.c
+SRC += features/select_word.c
