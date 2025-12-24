@@ -161,6 +161,94 @@ static inline bool kb_get_caps_lock_state(void) {
     return ((Keyboard_Status.System_Led_Status << 30) < 0);
 }
 
+static void Set_Factory_Defaults(void)
+{
+    Keyboard_Info.Batt_Number     = 50;
+    Keyboard_Info.Mac_Win_Mode    = 0;
+    Keyboard_Info.Win_Lock        = 0;
+    Keyboard_Info.Led_On_Off      = 0;
+    Keyboard_Info.Logo_On_Off     = 0;
+    Keyboard_Info.Logo_Colour     = 213;
+    Keyboard_Info.Logo_Saturation = 54;
+    Keyboard_Info.Key_Mode        = QMK_USB_MODE;
+    Keyboard_Info.Ble_Channel     = 1;
+    Keyboard_Info.Nkro            = 1;
+    Keyboard_Info.Debounce_Delay  = 5;
+    Keyboard_Info.Logo_Mode       = 2;
+    Keyboard_Info.Logo_Brightness = 60;
+    Keyboard_Info.Logo_Speed      = 1;
+}
+
+static void Sanitize_Settings(void) {
+    if (Keyboard_Info.Key_Mode > 2) {
+        Keyboard_Info.Key_Mode = QMK_USB_MODE;
+    }
+    
+    if (Keyboard_Info.Ble_Channel > 3) {
+        Keyboard_Info.Ble_Channel = 3;
+    }
+
+    if (Keyboard_Info.Batt_Number > 100) {
+        Keyboard_Info.Batt_Number = 100;
+    }
+
+    if (Keyboard_Info.Nkro > 1)         Keyboard_Info.Nkro = 1;
+    if (Keyboard_Info.Mac_Win_Mode > 1) Keyboard_Info.Mac_Win_Mode = 0;
+    if (Keyboard_Info.Win_Lock > 1)     Keyboard_Info.Win_Lock = 0;
+    if (Keyboard_Info.Led_On_Off > 1)   Keyboard_Info.Led_On_Off = 0;
+    if (Keyboard_Info.Logo_On_Off > 1)  Keyboard_Info.Logo_On_Off = 0;
+
+    if (Keyboard_Info.Debounce_Delay > 5) Keyboard_Info.Debounce_Delay = 5;
+    if (Keyboard_Info.Logo_Mode > 10)     Keyboard_Info.Logo_Mode = 1;
+    
+    if (Keyboard_Info.Logo_Brightness > 105) {
+        Keyboard_Info.Logo_Brightness = 60;
+    }
+    
+    if (Keyboard_Info.Logo_Speed > 4)     Keyboard_Info.Logo_Speed = 2;
+}
+
+void Init_Keeb_Info(void) {
+    eeprom_read_block_user(&Keyboard_Info, (void *)0x00, 0x0F);
+    bool perform_reset = false;
+
+    if (Keyboard_Info.Key_Mode == 0xFF) {
+        uint8_t check_mask = Keyboard_Info.Debounce_Delay &
+                             Keyboard_Info.Win_Lock &
+                             Keyboard_Info.Nkro &
+                             Keyboard_Info.Ble_Channel &
+                             Keyboard_Info.Batt_Number &
+                             Keyboard_Info.Mac_Win_Mode &
+                             Keyboard_Info.Led_On_Off;
+                             
+        if (check_mask == 0xFF) {
+            perform_reset = true;
+        } else {
+            Keyboard_Info.Key_Mode = QMK_USB_MODE;
+            if (Keyboard_Info.Ble_Channel > 3) {
+                Keyboard_Info.Ble_Channel = 3;
+            }
+        }
+    }
+    else if (Keyboard_Info.Key_Mode == 0x00 &&
+             Keyboard_Info.Ble_Channel == 0x00 &&
+             Keyboard_Info.Batt_Number == 0x00 &&
+             Keyboard_Info.Nkro == 0x00 &&
+             Keyboard_Info.Mac_Win_Mode == 0x00) {
+             
+         perform_reset = true;
+    }
+
+    if (perform_reset) {
+        Set_Factory_Defaults();
+    } else {
+        Sanitize_Settings();
+    }
+
+    Debounce_Delay = (uint32_t)Keyboard_Info.Debounce_Delay;
+    Debounce_Function_Count = (Keyboard_Info.Debounce_Delay != 2);
+}
+
 void matrix_io_delay(void) {}
 void matrix_output_select_delay(void) {}
 void matrix_output_unselect_delay(uint8_t line, bool key_pressed) {}
@@ -344,11 +432,55 @@ void housekeeping_task_user(void) {
 }
 
 void board_init(void) {
-    User_Keyboard_Init();
+    es_ble_spi_init();
+    User_Adc_Init();
+    eeprom_driver_init();
+    rgb_matrix_driver_init();
+
+    Init_Gpio_Infomation();
+    Init_Keeb_Info();
+    Init_Batt_Infomation();
+    User_Systime_Init();
+
+    if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
+        User_Usb_Init();
+        Led_Rf_Pair_Flg = false;
+    } else {
+        Usb_Disconnect();
+    }
+
+    Init_Spi_Power_Up = true;
+    Init_Spi_100ms_Delay = 0;
+    Spi_Interval = 0x3C;
+
+    volatile uint32_t *pSCB_SHPR3 = (volatile uint32_t *)0xE000ED20;
+    *pSCB_SHPR3 = (*pSCB_SHPR3 & 0xFFFF) | 0xC0C00000;
+
+    Usb_Suspend_Sig = false;
+    Usb_If_Ok = false;
+    Usb_If_Ok_Led = false;
+    Led_Power_Up = false;
+    Emi_Test_Start = false;
+
+    Logo_Init();
 }
 
 void keyboard_post_init_user(void) {
-    User_Keyboard_Post_Init();
+    bool config_nkro_on = (keymap_config.raw >> 7) & 1;
+    bool info_nkro_on   = (Keyboard_Info.Nkro != 0);
+    if (config_nkro_on != info_nkro_on) {
+        if (info_nkro_on) {
+            keymap_config.raw |= 0x80;
+        } else {
+            keymap_config.raw &= ~0x80;
+        }
+    }
+    if (Keyboard_Info.Mac_Win_Mode != 0) {
+        uint8_t current_layer = biton(layer_state);
+        if (current_layer != 1) {
+            layer_on(1);
+        }
+    }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
