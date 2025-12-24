@@ -297,14 +297,14 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         kb_led_batt_number_show();
     } 
 #if LOGO_LED_ENABLE
-    else if (kb_get_caps_lock_state()) {
-        uint8_t start_idx = LED_STOP_INDEX;
-        uint8_t end_idx = LED_STOP_INDEX + LOGO_LED_SIZE;
-        if (end_idx >= led_min && start_idx <= led_max) {
-            uint8_t loop_start = (start_idx > led_min) ? start_idx : led_min;
-            uint8_t loop_end   = (end_idx   < led_max) ? end_idx   : led_max;
-            for (uint8_t i = loop_start; i < loop_end; i++) {
-                rgb_matrix_set_color(i, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS);
+    bool layer_lock = is_layer_locked(2) || is_layer_locked(3);
+    if (layer_lock || kb_get_caps_lock_state()) {
+        uint8_t start = (LED_STOP_INDEX > led_min) ? LED_STOP_INDEX : led_min;
+        uint8_t end   = (LED_STOP_INDEX + LOGO_LED_SIZE < led_max) ? (LED_STOP_INDEX + LOGO_LED_SIZE) : led_max;
+        if (start < end) {
+            uint8_t val_b = layer_lock ? 0 : RGB_MATRIX_MAXIMUM_BRIGHTNESS;
+            for (uint8_t i = start; i < end; i++) {
+                rgb_matrix_set_color(i, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, val_b);
             }
         }
     }
