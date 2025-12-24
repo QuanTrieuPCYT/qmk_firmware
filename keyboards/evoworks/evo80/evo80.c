@@ -192,18 +192,20 @@ static void Sanitize_Settings(void) {
         Keyboard_Info.Batt_Number = 100;
     }
 
-    if (Keyboard_Info.Nkro > 1)         Keyboard_Info.Nkro = 1;
+    //if (Keyboard_Info.Nkro > 1)         Keyboard_Info.Nkro = 1;
     if (Keyboard_Info.Mac_Win_Mode > 1) Keyboard_Info.Mac_Win_Mode = 0;
     if (Keyboard_Info.Win_Lock > 1)     Keyboard_Info.Win_Lock = 0;
     if (Keyboard_Info.Led_On_Off > 1)   Keyboard_Info.Led_On_Off = 0;
     if (Keyboard_Info.Logo_On_Off > 1)  Keyboard_Info.Logo_On_Off = 0;
 
-    if (Keyboard_Info.Debounce_Delay > 5) Keyboard_Info.Debounce_Delay = 5;
+    //if (Keyboard_Info.Debounce_Delay > 5) Keyboard_Info.Debounce_Delay = 5;
     if (Keyboard_Info.Logo_Mode > 10)     Keyboard_Info.Logo_Mode = 1;
-    
-    if (Keyboard_Info.Logo_Brightness > 105) {
+
+    /*
+    if (Keyboard_Info.Logo_Brightness > 255) {
         Keyboard_Info.Logo_Brightness = 60;
     }
+    */
     
     if (Keyboard_Info.Logo_Speed > 4)     Keyboard_Info.Logo_Speed = 2;
 }
