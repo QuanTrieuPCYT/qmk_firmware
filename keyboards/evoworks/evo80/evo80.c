@@ -157,22 +157,6 @@ static inline bool kb_get_caps_lock_state(void) {
     return (Keyboard_Status.System_Led_Status & (1 << 1));
 }
 
-static inline uint8_t get_led_index_for_keycode(uint16_t target_keycode, uint8_t layer) {
-    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
-        for (uint8_t col = 0; col < MATRIX_COLS; col++) {
-            uint8_t led_index = g_led_config.matrix_co[row][col];
-            if (led_index == NO_LED) {
-                continue; 
-            }
-            keypos_t pos = {.row = row, .col = col};
-            if (keymap_key_to_keycode(layer, pos) == target_keycode) {
-                return led_index;
-            }
-        }
-    }
-    return NO_LED;
-}
-
 static void Set_Factory_Defaults(void)
 {
     Keyboard_Info.Batt_Number     = 50;
