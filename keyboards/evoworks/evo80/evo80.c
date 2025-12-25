@@ -128,17 +128,13 @@ void custom_config_get_value(uint8_t *data) {
     }
 }
 
-void custom_config_save(void) {
-    Save_Flash_Set();
-}
-
 void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
     if (data[1] == id_custom_channel) {
         uint8_t *payload = data + 2; 
         switch (data[0]) {
             case id_custom_set_value: custom_config_set_value(payload); break;
             case id_custom_get_value: custom_config_get_value(payload); break;
-            case id_custom_save:      custom_config_save(); break;
+            case id_custom_save:      Save_Flash_Set(); break;
             default:                  data[0] = id_unhandled; break;
         }
         return;
@@ -158,7 +154,7 @@ static inline bool kb_get_caps_lock_state(void) {
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
         return host_keyboard_led_state().caps_lock && Usb_If_Ok_Led;
     }
-    return ((Keyboard_Status.System_Led_Status << 30) < 0);
+    return (Keyboard_Status.System_Led_Status & (1 << 1));
 }
 
 static void Set_Factory_Defaults(void)
@@ -179,7 +175,7 @@ static void Set_Factory_Defaults(void)
     Keyboard_Info.Logo_Speed      = 1;
 }
 
-static void Sanitize_Settings(void) {
+static inline void Sanitize_Settings(void) {
     if (Keyboard_Info.Key_Mode > 2) {
         Keyboard_Info.Key_Mode = QMK_USB_MODE;
     }
