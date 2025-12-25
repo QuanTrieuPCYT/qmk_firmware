@@ -429,8 +429,8 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             cached_layer = current_layer;
         }
         const uint8_t val_b = layer_lock_active ? 0 : RGB_MATRIX_MAXIMUM_BRIGHTNESS;
-        if (cached_index != NO_LED) {
-            rgb_matrix_set_color(cached_index, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, val_b);
+        if (layer_lock_active && cached_index != NO_LED) {
+            rgb_matrix_set_color(cached_index, 180, 180, 0);
         }
         uint8_t start = (LED_STOP_INDEX > led_min) ? LED_STOP_INDEX : led_min;
         uint8_t end   = (LED_STOP_INDEX + LOGO_LED_SIZE < led_max) ? (LED_STOP_INDEX + LOGO_LED_SIZE) : led_max;
