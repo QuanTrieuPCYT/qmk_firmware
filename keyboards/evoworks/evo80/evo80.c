@@ -157,6 +157,22 @@ static inline bool kb_get_caps_lock_state(void) {
     return (Keyboard_Status.System_Led_Status & (1 << 1));
 }
 
+static inline uint8_t get_led_index_for_keycode(uint16_t target_keycode, uint8_t layer) {
+    for (uint8_t row = 0; row < MATRIX_ROWS; row++) {
+        for (uint8_t col = 0; col < MATRIX_COLS; col++) {
+            uint8_t led_index = g_led_config.matrix_co[row][col];
+            if (led_index == NO_LED) {
+                continue; 
+            }
+            keypos_t pos = {.row = row, .col = col};
+            if (keymap_key_to_keycode(layer, pos) == target_keycode) {
+                return led_index;
+            }
+        }
+    }
+    return NO_LED;
+}
+
 static void Set_Factory_Defaults(void)
 {
     Keyboard_Info.Batt_Number     = 50;
@@ -382,18 +398,43 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
     if (User_Key_Batt_Num_Show) {
         kb_led_batt_number_show();
-    } 
+    }
 #if LOGO_LED_ENABLE
+    const bool caps_active = kb_get_caps_lock_state();
+    
 #ifdef LAYER_LOCK_ENABLE
-    bool layer_lock = is_layer_locked(2) || is_layer_locked(3);
+    const bool layer_lock_active = is_layer_locked(2) || is_layer_locked(3);
 #else
-    bool layer_lock = false;
+    const bool layer_lock_active = false;
 #endif
-    if (layer_lock || kb_get_caps_lock_state()) {
+
+    if (layer_lock_active || caps_active) {
+        static uint8_t cached_index = NO_LED;
+        static uint8_t cached_layer = 255;
+        uint8_t current_layer = get_highest_layer(layer_state);
+        if (cached_layer != current_layer) {
+            cached_index = NO_LED;
+            for (uint8_t r = 0; r < MATRIX_ROWS; r++) {
+                for (uint8_t c = 0; c < MATRIX_COLS; c++) {
+                    uint8_t idx = g_led_config.matrix_co[r][c];
+                    if (idx == NO_LED) continue;
+                    keypos_t pos = {.row = r, .col = c};
+                    if (keymap_key_to_keycode(current_layer, pos) == QK_LAYER_LOCK) {
+                        cached_index = idx;
+                        goto search_done;
+                    }
+                }
+            }
+            search_done:
+            cached_layer = current_layer;
+        }
+        const uint8_t val_b = layer_lock_active ? 0 : RGB_MATRIX_MAXIMUM_BRIGHTNESS;
+        if (cached_index != NO_LED) {
+            rgb_matrix_set_color(cached_index, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, val_b);
+        }
         uint8_t start = (LED_STOP_INDEX > led_min) ? LED_STOP_INDEX : led_min;
         uint8_t end   = (LED_STOP_INDEX + LOGO_LED_SIZE < led_max) ? (LED_STOP_INDEX + LOGO_LED_SIZE) : led_max;
         if (start < end) {
-            uint8_t val_b = layer_lock ? 0 : RGB_MATRIX_MAXIMUM_BRIGHTNESS;
             for (uint8_t i = start; i < end; i++) {
                 rgb_matrix_set_color(i, RGB_MATRIX_MAXIMUM_BRIGHTNESS, RGB_MATRIX_MAXIMUM_BRIGHTNESS, val_b);
             }
