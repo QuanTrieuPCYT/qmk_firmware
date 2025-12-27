@@ -67,52 +67,62 @@ void custom_config_set_value(uint8_t *data) {
         }
         case id_nkro_toggle:
         {
-            clear_keyboard();
-            keymap_config.raw ^= 0x80;
-            Keyboard_Info.Nkro ^= 1;
+            if (data[1] != Keyboard_Info.Nkro) {
+                clear_keyboard();
+                keymap_config.raw ^= 0x80;
+                Keyboard_Info.Nkro ^= 1;
+            }
             break;
         }
         case id_mac_mode:
         {
-            unregister_code(0x65);
-            unregister_code(0xe2);
-            unregister_code(0xe3);
-            unregister_code(0xe6);
-            unregister_code(0xe7);
+            if (data[1] != Keyboard_Info.Mac_Win_Mode) {
+                unregister_code(0x65);
+                unregister_code(0xe2);
+                unregister_code(0xe3);
+                unregister_code(0xe6);
+                unregister_code(0xe7);
 
-            Keyboard_Info.Mac_Win_Mode ^= 1;
-            if (biton(layer_state) != Keyboard_Info.Mac_Win_Mode) {
-                layer_move(Keyboard_Info.Mac_Win_Mode);
+                Keyboard_Info.Mac_Win_Mode ^= 1;
+                if (biton(layer_state) != Keyboard_Info.Mac_Win_Mode) {
+                    layer_move(Keyboard_Info.Mac_Win_Mode);
+                }
             }
             break;
         }
         case id_win_lock:
         {
-            if (Keyboard_Info.Win_Lock) {
-                Keyboard_Info.Win_Lock = 0;
-            } else if (Keyboard_Info.Mac_Win_Mode == 0) {
-                Keyboard_Info.Win_Lock = 1;
-                unregister_code(0xe3);
-                unregister_code(0xe7);
-                unregister_code(0x65);
+            if (data[1] != Keyboard_Info.Win_Lock) {
+                if (Keyboard_Info.Win_Lock) {
+                    Keyboard_Info.Win_Lock = 0;
+                } else if (Keyboard_Info.Mac_Win_Mode == 0) {
+                    Keyboard_Info.Win_Lock = 1;
+                    unregister_code(0xe3);
+                    unregister_code(0xe7);
+                    unregister_code(0x65);
+                }
             }
             break;
         }
         case id_rgb_toggle:
         {
-            Keyboard_Info.Led_On_Off ^= 1;
-            if (Keyboard_Info.Led_On_Off && rgb_matrix_get_val() == 0) {
-                 rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), rgb_matrix_get_sat(), 0xB4);
+            if (data[1] == Keyboard_Info.Led_On_Off) {
+                Keyboard_Info.Led_On_Off ^= 1;
+                if (!Keyboard_Info.Led_On_Off && rgb_matrix_get_val() == 0) {
+                    rgb_matrix_sethsv_noeeprom(rgb_matrix_get_hue(), rgb_matrix_get_sat(), 0xB4);
+                }
             }
             break;
         }
         case id_logo_toggle:
         {
-            Keyboard_Info.Logo_On_Off ^= 1;
-            if (Keyboard_Info.Logo_On_Off && Keyboard_Info.Logo_Brightness == 0) {
-                Keyboard_Info.Logo_Brightness = 105;
+            if (data[1] == Keyboard_Info.Logo_On_Off) {
+                Keyboard_Info.Logo_On_Off ^= 1;
+                if (!Keyboard_Info.Logo_On_Off && Keyboard_Info.Logo_Brightness == 0) {
+                    Keyboard_Info.Logo_Brightness = 105;
+                }
+                Logo_Init();
             }
-            Logo_Init();
             break;
         }
     }
