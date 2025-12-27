@@ -27,6 +27,8 @@
 #ifdef LTO_ENABLED
 __attribute__((weak, noinline)) void bootloader_jump(void) {}
 __attribute__((weak, noinline)) void mcu_reset(void) {}
+__attribute__((weak, noinline)) void rgb_matrix_driver_flush_pwm_dma_start(void) {}
+__attribute__((weak, noinline)) void User_Sleep(void) {}
 #endif
 
 static inline uint8_t get_wave_value(uint8_t index) {
