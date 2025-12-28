@@ -24,7 +24,7 @@
 #define BATT_LED_TOTAL     10
 #define BATT_LED_MAX_WAVE  127
 
-#ifdef LTO_ENABLED
+#ifdef LTO_ENABLE
 __attribute__((weak, noinline)) void bootloader_jump(void) {}
 __attribute__((weak, noinline)) void mcu_reset(void) {}
 __attribute__((weak, noinline)) void rgb_matrix_driver_flush_pwm_dma_start(void) {}

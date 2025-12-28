@@ -31,7 +31,7 @@ MASTER_OUTPUT := $(firstword $(OUTPUTS))
 FORMAT = ihex
 
 # Optimization level, can be [0, 1, 2, 3, s].
-OPT ?= s
+OPT ?= 3
 
 # Compiler flag to set the C and C++ language standard level
 CSTANDARD = -std=gnu11
@@ -50,7 +50,7 @@ ifeq ($(strip $(LTO_ENABLE)), yes)
         $(info Enabling LTO on arm_atsam-targeting boards is known to have a high likelihood of failure.)
         $(info If unsure, set LTO_ENABLE = no.)
     endif
-    CDEFS += -flto
+    CDEFS += -flto=auto
     CDEFS += -DLTO_ENABLE
 endif
 
