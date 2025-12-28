@@ -550,11 +550,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         Reset_Save_Flash = true;
         eeprom_write_block_user(&Keyboard_Info, (void *)0x0, 0xF);
         Debounce_Delay = Keyboard_Info.Debounce_Delay;
-        if (Debounce_Delay != 2) {
-             Debounce_Function_Count = true;
-        } else {
-             Debounce_Function_Count = false;
-        }
+        Debounce_Function_Count = (Debounce_Delay != 2);
         Reset_Save_Flash = false;
         return true;
     }
