@@ -185,8 +185,7 @@ static inline uint8_t get_led_index_for_keycode(uint16_t target_keycode, uint8_t
     return NO_LED;
 }
 
-static void Set_Factory_Defaults(void)
-{
+static void Set_Factory_Defaults(void) {
     Keyboard_Info.Batt_Number     = 50;
     Keyboard_Info.Mac_Win_Mode    = 0;
     Keyboard_Info.Win_Lock        = 0;
@@ -232,6 +231,21 @@ static inline void Sanitize_Settings(void) {
     */
     
     if (Keyboard_Info.Logo_Speed > 4)     Keyboard_Info.Logo_Speed = 2;
+}
+
+static inline void User_Keeb_Reset_Set_Variables(void) {
+    Keyboard_Info.Debounce_Delay = 5;
+    Keyboard_Info.Logo_Brightness = 60;
+    Keyboard_Info.Logo_Speed = 1;
+    Keyboard_Info.Nkro = 1;
+    Keyboard_Info.Mac_Win_Mode = 0;
+    Keyboard_Info.Win_Lock = 0;
+    Keyboard_Info.Led_On_Off = 0;
+    Keyboard_Info.Logo_On_Off = 0;
+    Keyboard_Info.Logo_Mode = 2;
+    Keyboard_Info.Logo_Colour = 213;
+    Keyboard_Info.Logo_Saturation = 54;
+    Logo_Init();
 }
 
 void Init_Keeb_Info(void) {
@@ -448,7 +462,14 @@ void notify_usb_device_state_change_user(enum usb_device_state usb_device_state)
 
 void housekeeping_task_user(void) {
     if (User_State_Fulfill_Flag) {
-        User_Keyboard_Reset();
+        User_Keeb_Reset_Set_Variables();
+        Reset_Save_Flash = true;
+        eeprom_write_block_user(&Keyboard_Info,(void *)0x0,0xf);
+        Reset_Save_Flash = false;
+        Debounce_Delay = Keyboard_Info.Debounce_Delay;
+        Debounce_Function_Count = (Debounce_Delay != 2);
+        eeconfig_disable();
+        soft_reset_keyboard();
         User_State_Fulfill_Flag = 0x00;
     }
     if (WIN_MAC_CHANGE) {
@@ -525,18 +546,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     }
     if (keycode == QK_CLEAR_EEPROM) {
         if (!(record->event.pressed)) return true;
-        Keyboard_Info.Debounce_Delay = 5;
-        Keyboard_Info.Logo_Brightness = 60;
-        Keyboard_Info.Logo_Speed = 1;
-        Keyboard_Info.Nkro = 1;
-        Keyboard_Info.Mac_Win_Mode = 0;
-        Keyboard_Info.Win_Lock = 0;
-        Keyboard_Info.Led_On_Off = 0;
-        Keyboard_Info.Logo_On_Off = 0;
-        Keyboard_Info.Logo_Mode = 2;
-        Keyboard_Info.Logo_Colour = 213;
-        Keyboard_Info.Logo_Saturation = 54;
-        Logo_Init();
+        User_Keeb_Reset_Set_Variables();
         Reset_Save_Flash = true;
         eeprom_write_block_user(&Keyboard_Info, (void *)0x0, 0xF);
         Debounce_Delay = Keyboard_Info.Debounce_Delay;
