@@ -61,7 +61,7 @@ __attribute__((weak)) bool select_word_host_is_mac(void) {
 #  ifdef SELECT_WORD_OS_MAC
   return true;
 #  else
-  return Keyboard_Info.Mac_Win_Mode; // using firmware's native Mac mode
+  return false;
   //return false;
 #  endif  // SELECT_WORD_OS_MAC
 }
@@ -70,7 +70,7 @@ __attribute__((weak)) bool select_word_host_is_mac(void) {
 #  ifdef SELECT_WORD_OS_MAC
 #  define IS_MAC true
 #  else
-#  define IS_MAC false
+#  define IS_MAC Keyboard_Info.Mac_Win_Mode // using firmware's native Mac mode
 #  endif  // SELECT_WORD_OS_MAC
 #endif  // defined(SELECT_WORD_OS_DYNAMIC) || defined(OS_DETECTION_ENABLE)
 
