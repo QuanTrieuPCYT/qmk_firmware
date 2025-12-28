@@ -464,7 +464,7 @@ void housekeeping_task_user(void) {
     if (User_State_Fulfill_Flag) {
         User_Keeb_Reset_Set_Variables();
         Reset_Save_Flash = true;
-        eeprom_write_block_user(&Keyboard_Info,(void *)0x0,0xf);
+        eeprom_write_block_user(&Keyboard_Info, (void *)0x0, 0xF);
         Reset_Save_Flash = false;
         Debounce_Delay = Keyboard_Info.Debounce_Delay;
         Debounce_Function_Count = (Debounce_Delay != 2);
