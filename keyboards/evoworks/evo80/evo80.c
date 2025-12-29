@@ -548,7 +548,6 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
             if (Keyboard_Info.Mac_Win_Mode) cycle_mac_win();
             break;
     }
-    
     return true;
 }
 
