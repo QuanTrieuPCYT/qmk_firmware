@@ -57,7 +57,7 @@ enum via_custom_config_value {
     id_logo_toggle   = 6
 };
 
-void custom_config_set_value(uint8_t *data) {
+static inline void custom_config_set_value(uint8_t *data) {
     switch (data[0]) {
         case id_debounce_time:
         {
@@ -128,7 +128,7 @@ void custom_config_set_value(uint8_t *data) {
     }
 }
 
-void custom_config_get_value(uint8_t *data) {
+static inline void custom_config_get_value(uint8_t *data) {
     uint8_t *result  = &data[1];
     switch (data[0]) {
         case id_debounce_time: *result = Keyboard_Info.Debounce_Delay; break;
@@ -248,7 +248,7 @@ static inline void User_Keeb_Reset_Set_Variables(void) {
     Logo_Init();
 }
 
-void Init_Keeb_Info(void) {
+static inline void Init_Keeb_Info(void) {
     eeprom_read_block_user(&Keyboard_Info, (void *)0x00, 0x0F);
     bool perform_reset = false;
 
@@ -321,7 +321,7 @@ led_config_t g_led_config = { {
     0,  0,  0,  0,  0
 } };
 
-void kb_led_batt_number_show(void) {
+static inline void kb_led_batt_number_show(void) {
     static uint16_t last_batt_timer = 0;
     const uint8_t pin_state = es_stdby_pin_state;
     const uint8_t current_batt = Keyboard_Info.Batt_Number;
