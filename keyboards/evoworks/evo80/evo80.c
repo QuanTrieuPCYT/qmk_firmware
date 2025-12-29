@@ -46,6 +46,19 @@ static inline uint8_t fast_div100(uint16_t x) {
     return (x * 41) >> 12;
 }
 
+static inline void cycle_mac_win(void) {
+    unregister_code(0x65);
+    unregister_code(0xe2);
+    unregister_code(0xe3);
+    unregister_code(0xe6);
+    unregister_code(0xe7);
+
+    Keyboard_Info.Mac_Win_Mode ^= 1;
+    if (biton(layer_state) != Keyboard_Info.Mac_Win_Mode) {
+        layer_move(Keyboard_Info.Mac_Win_Mode);
+    }
+}
+
 #ifdef VIA_ENABLE // via exclusive feature
 #include "via.h"
 enum via_custom_config_value {
@@ -76,18 +89,7 @@ static inline void custom_config_set_value(uint8_t *data) {
         }
         case id_mac_mode:
         {
-            if (data[1] != Keyboard_Info.Mac_Win_Mode) {
-                unregister_code(0x65);
-                unregister_code(0xe2);
-                unregister_code(0xe3);
-                unregister_code(0xe6);
-                unregister_code(0xe7);
-
-                Keyboard_Info.Mac_Win_Mode ^= 1;
-                if (biton(layer_state) != Keyboard_Info.Mac_Win_Mode) {
-                    layer_move(Keyboard_Info.Mac_Win_Mode);
-                }
-            }
+            if (data[1] != Keyboard_Info.Mac_Win_Mode) cycle_mac_win();
             break;
         }
         case id_win_lock:
@@ -529,6 +531,25 @@ void keyboard_post_init_user(void) {
             layer_on(1);
         }
     }
+}
+
+bool process_detected_host_os_kb(os_variant_t detected_os) {
+    if (!process_detected_host_os_user(detected_os)) {
+        return false;
+    }
+    switch (detected_os) {
+        case OS_MACOS:
+        case OS_IOS:
+            if (!Keyboard_Info.Mac_Win_Mode) cycle_mac_win();
+            break;
+        case OS_WINDOWS:
+        case OS_LINUX:
+        case OS_UNSURE:
+            if (Keyboard_Info.Mac_Win_Mode) cycle_mac_win();
+            break;
+    }
+    
+    return true;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
