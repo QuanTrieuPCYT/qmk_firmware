@@ -35,6 +35,7 @@ static int8_t selection_dir = 0;
 static bool reset_before_next_event = false;
 static uint8_t registered_hotkey = KC_NO;
 
+/*
 // Macro `IS_MAC` determines whether to use Mac vs. Windows/Linux hotkeys:
 //
 // * OS Detection is used if it is enabled.
@@ -73,6 +74,8 @@ __attribute__((weak)) bool select_word_host_is_mac(void) {
 #  define IS_MAC Keyboard_Info.Mac_Win_Mode // using firmware's native Mac mode
 #  endif  // SELECT_WORD_OS_MAC
 #endif  // defined(SELECT_WORD_OS_DYNAMIC) || defined(OS_DETECTION_ENABLE)
+*/
+#define IS_MAC Keyboard_Info.Mac_Win_Mode // using firmware's native Mac mode
 
 // Idle timeout timer to reset Select Word after a period of inactivity.
 #if SELECT_WORD_TIMEOUT > 0
