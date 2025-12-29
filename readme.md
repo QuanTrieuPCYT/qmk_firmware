@@ -9,7 +9,7 @@ This repo holds the codebase of the firmware of my Evoworks Evo80. Changes have 
 - Implemented Layer Lock, with yellow-ish indicator at the Layer Lock key and the RGB Logo strip
 - Implemented Word Select, with respect to Mac machines when keyboard is set to Mac mode
 - Battery indicator now also shows from the Q key to the P key (10 LEDs), and also the RGB strip (the strip shows the progress, the circle LED mirrors the state of the Esc key)
-- Enabled link-time optimizations, reworked and refactored code and logic for better performance
+- Enabled link-time optimizations, reworked and refactored code and logic for better performance. Excluded functions that would break when the firmware is compiled with LTO from being inlined
 - Implemented logic for extra configurations (light toggles, debounce configuration, NKRO, Windows key Lock and Mac mode) to the VIA configuration GUI (new channel logics and custom config values). Changes are live on my personal forks of VIA's [keyboards](https://github.com/QuanTrieuPCYT/via-keyboards) and [app](https://github.com/QuanTrieuPCYT/via-app) repositories
 
 To-do:
