@@ -533,6 +533,7 @@ void keyboard_post_init_user(void) {
     }
 }
 
+/*
 bool process_detected_host_os_kb(os_variant_t detected_os) {
     if (!process_detected_host_os_user(detected_os)) {
         return false;
@@ -550,6 +551,7 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
     }
     return true;
 }
+*/
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     Usb_Change_Mode_Delay = 0;

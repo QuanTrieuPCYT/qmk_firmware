@@ -17,7 +17,6 @@ MUSIC_ENABLE = no
 OLED_ENABLE = no
 SKIP_DEBUG_INFO = yes
 DEBUG_ENABLE = no
-OS_DETECTION_ENABLE = yes
 
 DEBOUNCE_TYPE = asym_eager_defer_pk
 SRC += features/layer_lock.c
