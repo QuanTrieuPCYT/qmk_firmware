@@ -67,6 +67,7 @@
 #endif
 
 // secure-related config
+#define SECURE_DISABLE_KEYCODES
 #define SECURE_UNLOCK_TIMEOUT 5000
 #define SECURE_IDLE_TIMEOUT 0
 
