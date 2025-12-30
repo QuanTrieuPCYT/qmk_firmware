@@ -66,6 +66,10 @@
 #define NOP_FUDGE 0.4
 #endif
 
+// secure-related config
+#define SECURE_UNLOCK_TIMEOUT 5000
+#define SECURE_IDLE_TIMEOUT 0
+
 // rgb matrix-related config
 #define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_FLOWER_BLOOMING
 #define RGB_MATRIX_DEFAULT_SPD 255
