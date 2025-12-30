@@ -557,12 +557,12 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     Usb_Change_Mode_Delay = 0;
     Usb_Change_Mode_Wakeup = false;
-//#ifdef SECURE_ENABLE
+#if SECURE_ENABLE
     if (keycode == QK_SECURE_LOCK && !record->event.pressed) {
         secure_lock();
         return false;
     }
-//#endif
+#endif
 #ifdef LAYER_LOCK_ENABLE
     if (!process_layer_lock(keycode, record, QK_LAYER_LOCK)) { return false; }
 #endif

@@ -67,9 +67,11 @@
 #endif
 
 // secure-related config
+#if SECURE_ENABLE
 #define SECURE_DISABLE_KEYCODES
 #define SECURE_UNLOCK_TIMEOUT 5000
 #define SECURE_IDLE_TIMEOUT 0
+#endif
 
 // rgb matrix-related config
 #define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_FLOWER_BLOOMING
