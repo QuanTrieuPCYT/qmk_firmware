@@ -164,11 +164,12 @@ static const uint8_t BATT_COLOR_LUT[4][3] = {
     {0,   180, 0}
 };
 
-static inline bool kb_get_caps_lock_state(void) {
+static inline bool kb_get_lock_state(void) {
     if (Keyboard_Info.Key_Mode == QMK_USB_MODE) {
-        return host_keyboard_led_state().caps_lock && Usb_If_Ok_Led;
+        if (!Usb_If_Ok_Led) return false;
+        return (host_keyboard_led_state().raw & ((1 << 1) | (1 << 2)));
     }
-    return (Keyboard_Status.System_Led_Status & (1 << 1));
+    return Keyboard_Status.System_Led_Status & 0x06;
 }
 
 static inline uint8_t get_led_index_for_keycode(uint16_t target_keycode, uint8_t layer) {
@@ -433,7 +434,7 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 #else
     bool layer_lock = false;
 #endif
-    if (layer_lock || kb_get_caps_lock_state()) {
+    if (layer_lock || kb_get_lock_state()) {
         if (layer_lock) rgb_matrix_set_color(get_led_index_for_keycode(QK_LAYER_LOCK, get_highest_layer(layer_state)), 180, 180, 0);
         uint8_t start = (LED_STOP_INDEX > led_min) ? LED_STOP_INDEX : led_min;
         uint8_t end   = (LED_STOP_INDEX + LOGO_LED_SIZE < led_max) ? (LED_STOP_INDEX + LOGO_LED_SIZE) : led_max;
