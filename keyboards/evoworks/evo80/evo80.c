@@ -32,8 +32,7 @@ __attribute__((weak, noinline)) void User_Sleep(void) {}
 #endif
 
 #ifdef DYNAMIC_MACRO_ENABLE
-static uint8_t dMacro1 = 0;
-static uint8_t dMacro2 = 0;
+static uint8_t dMacro = 0;
 #endif
 
 static inline uint8_t get_wave_value(uint8_t index) {
@@ -434,10 +433,10 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         kb_led_batt_number_show();
     }
 #ifdef DYNAMIC_MACRO_ENABLE
-    if (dMacro1) {
+    if (dMacro == 1) {
         rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
     }
-    if (dMacro2) {
+    if (dMacro == -1) {
         rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
     }
 #endif
@@ -569,14 +568,13 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
 
 #ifdef DYNAMIC_MACRO_ENABLE
 void dynamic_macro_record_start_user(int8_t direction) {
-    if (direction == 1) dMacro1 = 1;
-    if (direction == -1) dMacro2 = 1;
+    if (direction == 1) dMacro = 1;
+    else if (direction == -1) dMacro = -1;
 }
 
 
 void dynamic_macro_record_end_user(int8_t direction) {
-    if (direction == 1) dMacro1 = 0;
-    if (direction == -1) dMacro2 = 0;
+    dMacro = 0;
 }
 #endif
 
