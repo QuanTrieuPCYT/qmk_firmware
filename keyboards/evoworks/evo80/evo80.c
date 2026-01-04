@@ -192,7 +192,7 @@ static inline uint8_t get_led_index_for_keycode(uint16_t target_keycode, uint8_t
     return NO_LED;
 }
 
-static void Set_Factory_Defaults(void) {
+static inline void Set_Factory_Defaults(void) {
     Keyboard_Info.Batt_Number     = 50;
     Keyboard_Info.Mac_Win_Mode    = 0;
     Keyboard_Info.Win_Lock        = 0;
@@ -429,13 +429,13 @@ static inline void kb_led_batt_number_show(void) {
 
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
-    if (User_Key_Batt_Num_Show) {
-        kb_led_batt_number_show();
-    }
 #ifdef DYNAMIC_MACRO_ENABLE
     if (dMacro == 1) rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
     else if (dMacro == -1) rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
 #endif
+    if (User_Key_Batt_Num_Show) {
+        kb_led_batt_number_show();
+    }
 #if LOGO_LED_ENABLE
 #ifdef LAYER_LOCK_ENABLE
     bool layer_lock = is_layer_locked(2) || is_layer_locked(3);
@@ -543,6 +543,7 @@ void keyboard_post_init_user(void) {
 }
 
 /*
+#ifdef OS_DETECTION_ENABLE
 bool process_detected_host_os_kb(os_variant_t detected_os) {
     if (!process_detected_host_os_user(detected_os)) {
         return false;
@@ -560,6 +561,7 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
     }
     return true;
 }
+#endif
 */
 
 #ifdef DYNAMIC_MACRO_ENABLE
