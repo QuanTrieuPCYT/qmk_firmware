@@ -31,6 +31,11 @@ __attribute__((weak, noinline)) void rgb_matrix_driver_flush_pwm_dma_start(void)
 __attribute__((weak, noinline)) void User_Sleep(void) {}
 #endif
 
+#ifdef DYNAMIC_MACRO_ENABLE
+static uint8_t dMacro1 = 0;
+static uint8_t dMacro2 = 0;
+#endif
+
 static inline uint8_t get_wave_value(uint8_t index) {
     uint8_t x = index & 127;
     if (x & 64) x = 128 - x; 
@@ -427,14 +432,20 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
     if (User_Key_Batt_Num_Show) {
         kb_led_batt_number_show();
-    } 
+    }
 #if LOGO_LED_ENABLE
 #ifdef LAYER_LOCK_ENABLE
     bool layer_lock = is_layer_locked(2) || is_layer_locked(3);
 #else
     bool layer_lock = false;
 #endif
-    if (layer_lock || kb_get_lock_state()) {
+#ifndef DYNAMIC_MACRO_ENABLE
+    bool dMacro1 = false;
+    bool dMacro2 = false;
+#endif
+    if (layer_lock || kb_get_lock_state() || dMacro1 || dMacro2) {
+        if (dMacro1) rgb_matrix_set_color(get_led_index_for_keycode(QK_DYNAMIC_MACRO_RECORD_START_1, get_highest_layer(layer_state)), 180, 180, 180);
+        if (dMacro2) rgb_matrix_set_color(get_led_index_for_keycode(QK_DYNAMIC_MACRO_RECORD_START_2, get_highest_layer(layer_state)), 180, 180, 180);
         if (layer_lock) rgb_matrix_set_color(get_led_index_for_keycode(QK_LAYER_LOCK, get_highest_layer(layer_state)), 180, 180, 0);
         uint8_t start = (LED_STOP_INDEX > led_min) ? LED_STOP_INDEX : led_min;
         uint8_t end   = (LED_STOP_INDEX + LOGO_LED_SIZE < led_max) ? (LED_STOP_INDEX + LOGO_LED_SIZE) : led_max;
@@ -553,6 +564,19 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
     return true;
 }
 */
+
+#ifdef DYNAMIC_MACRO_ENABLE
+void dynamic_macro_record_start_user(int8_t direction) {
+    if (direction == 1) dMacro1 = 1;
+    if (direction == -1) dMacro2 = 1;
+}
+
+
+void dynamic_macro_record_end_user(int8_t direction) {
+    if (direction == 1) dMacro1 = 0;
+    if (direction == -1) dMacro2 = 0;
+}
+#endif
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     Usb_Change_Mode_Delay = 0;
