@@ -433,12 +433,8 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         kb_led_batt_number_show();
     }
 #ifdef DYNAMIC_MACRO_ENABLE
-    if (dMacro == 1) {
-        rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
-    }
-    if (dMacro == -1) {
-        rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
-    }
+    if (dMacro == 1) rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
+    else if (dMacro == -1) rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
 #endif
 #if LOGO_LED_ENABLE
 #ifdef LAYER_LOCK_ENABLE
