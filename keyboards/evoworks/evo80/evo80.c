@@ -433,19 +433,21 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (User_Key_Batt_Num_Show) {
         kb_led_batt_number_show();
     }
+#ifdef DYNAMIC_MACRO_ENABLE
+    if (dMacro1) {
+        rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
+    }
+    if (dMacro2) {
+        rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
+    }
+#endif
 #if LOGO_LED_ENABLE
 #ifdef LAYER_LOCK_ENABLE
     bool layer_lock = is_layer_locked(2) || is_layer_locked(3);
 #else
     bool layer_lock = false;
 #endif
-#ifndef DYNAMIC_MACRO_ENABLE
-    bool dMacro1 = false;
-    bool dMacro2 = false;
-#endif
-    if (layer_lock || kb_get_lock_state() || dMacro1 || dMacro2) {
-        if (dMacro1) rgb_matrix_set_color(get_led_index_for_keycode(QK_DYNAMIC_MACRO_RECORD_START_1, get_highest_layer(layer_state)), 180, 180, 180);
-        if (dMacro2) rgb_matrix_set_color(get_led_index_for_keycode(QK_DYNAMIC_MACRO_RECORD_START_2, get_highest_layer(layer_state)), 180, 180, 180);
+    if (layer_lock || kb_get_lock_state()) {
         if (layer_lock) rgb_matrix_set_color(get_led_index_for_keycode(QK_LAYER_LOCK, get_highest_layer(layer_state)), 180, 180, 0);
         uint8_t start = (LED_STOP_INDEX > led_min) ? LED_STOP_INDEX : led_min;
         uint8_t end   = (LED_STOP_INDEX + LOGO_LED_SIZE < led_max) ? (LED_STOP_INDEX + LOGO_LED_SIZE) : led_max;
