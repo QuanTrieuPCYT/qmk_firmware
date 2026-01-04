@@ -18,7 +18,7 @@ jobs:
         run: sudo apt-get install -y gcc-arm-none-eabi libnewlib-arm-none-eabi --no-install-recommends -y
             
       - name: Install QMK toolchain
-        run: curl -fsSL https://install.qmk.fm | CONFIRM=1 SKIP_CLEAN=1 UV_INSTALL_DIR=uv QMK_DISTRIB_DIR=qmk SKIP_QMK_FLASHUTILS=1 SKIP_UDEV_RULES=1 SKIP_WINDOWS_DRIVERS=1 sh
+        run: curl -fsSL https://install.qmk.fm | CONFIRM=1 SKIP_CLEAN=1 UV_INSTALL_DIR=uv QMK_DISTRIB_DIR=qmk SKIP_QMK_FLASHUTILS=1 SKIP_PACKAGE_MANAGER=1 SKIP_UDEV_RULES=1 SKIP_WINDOWS_DRIVERS=1 SKIP_QMK_TOOLCHAINS=1 sh
 
       - name: Install missing Python dependencies
         run: ~/.local/share/uv/tools/qmk/bin/python -m pip install -r requirements.txt
