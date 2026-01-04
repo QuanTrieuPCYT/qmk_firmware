@@ -75,6 +75,9 @@
 #endif
 */
 
+// dynamic macro-related config
+#define DYNAMIC_MACRO_NO_NESTING
+
 // rgb matrix-related config
 #define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_FLOWER_BLOOMING
 #define RGB_MATRIX_DEFAULT_SPD 255
