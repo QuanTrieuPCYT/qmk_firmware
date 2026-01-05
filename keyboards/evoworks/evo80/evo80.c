@@ -605,7 +605,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         Debounce_Delay = Keyboard_Info.Debounce_Delay;
         Debounce_Function_Count = (Debounce_Delay != 2);
         Reset_Save_Flash = false;
-        return true;
+        return false;
     }
     return Key_Value_Dispose(keycode, record);
 }
