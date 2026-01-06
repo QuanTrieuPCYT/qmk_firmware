@@ -22,6 +22,7 @@
 #include "keycodes.h"
 #include "debug.h"
 #include "wait.h"
+#include "../../keyboards/evoworks/evo80/features/layer_lock.h"
 
 #ifdef BACKLIGHT_ENABLE
 #    include "backlight.h"
@@ -88,6 +89,9 @@ void dynamic_macro_record_start(keyrecord_t **macro_pointer, keyrecord_t *macro_
         dm2_layer_state = layer_state;
     }
 #else
+#ifdef LAYER_LOCK_ENABLE
+    layer_lock_all_off();
+#endif
     layer_clear();
 #endif
     clear_keyboard();
@@ -114,6 +118,9 @@ void dynamic_macro_play(keyrecord_t *macro_buffer, keyrecord_t *macro_end, int8_
         layer_state_set(dm2_layer_state);
     }
 #else
+#ifdef LAYER_LOCK_ENABLE
+    layer_lock_all_off();
+#endif
     layer_clear();
 #endif
 
