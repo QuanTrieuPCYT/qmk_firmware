@@ -32,7 +32,7 @@ __attribute__((weak, noinline)) void User_Sleep(void) {}
 #endif
 
 #ifdef DYNAMIC_MACRO_ENABLE
-static uint8_t dMacro = 0;
+static int8_t dMacro = 0;
 #endif
 
 static inline uint8_t get_wave_value(uint8_t index) {
@@ -129,7 +129,6 @@ static inline void custom_config_set_value(uint8_t *data) {
                 }
                 Logo_Init();
             }
-            break;
         }
     }
 }
@@ -142,7 +141,7 @@ static inline void custom_config_get_value(uint8_t *data) {
         case id_mac_mode:      *result = Keyboard_Info.Mac_Win_Mode; break;
         case id_win_lock:      *result = Keyboard_Info.Win_Lock; break;
         case id_rgb_toggle:    *result = !Keyboard_Info.Led_On_Off; break;
-        case id_logo_toggle:   *result = !Keyboard_Info.Logo_On_Off; break;
+        case id_logo_toggle:   *result = !Keyboard_Info.Logo_On_Off;
     }
 }
 
@@ -153,7 +152,7 @@ void via_custom_value_command_kb(uint8_t *data, uint8_t length) {
             case id_custom_set_value: custom_config_set_value(payload); break;
             case id_custom_get_value: custom_config_get_value(payload); break;
             case id_custom_save:      Save_Flash_Set(); break;
-            default:                  data[0] = id_unhandled; break;
+            default:                  data[0] = id_unhandled;
         }
         return;
     }
@@ -430,8 +429,10 @@ static inline void kb_led_batt_number_show(void) {
 bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
 #ifdef DYNAMIC_MACRO_ENABLE
-    if (dMacro == 1) rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
-    else if (dMacro == -1) rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
+    switch (dMacro) {
+        case 1: rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180); break;
+        case -1: rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
+    }
 #endif
     if (User_Key_Batt_Num_Show) {
         kb_led_batt_number_show();
@@ -557,7 +558,6 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
         case OS_LINUX:
         case OS_UNSURE:
             if (Keyboard_Info.Mac_Win_Mode) cycle_mac_win();
-            break;
     }
     return true;
 }
@@ -566,8 +566,7 @@ bool process_detected_host_os_kb(os_variant_t detected_os) {
 
 #ifdef DYNAMIC_MACRO_ENABLE
 void dynamic_macro_record_start_user(int8_t direction) {
-    if (direction == 1) dMacro = 1;
-    else if (direction == -1) dMacro = -1;
+    dMacro = direction;
 }
 
 
