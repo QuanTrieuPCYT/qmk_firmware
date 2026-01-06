@@ -228,7 +228,7 @@ static inline void Sanitize_Settings(void) {
     if (Keyboard_Info.Logo_On_Off > 1)  Keyboard_Info.Logo_On_Off = 0;
 
     //if (Keyboard_Info.Debounce_Delay > 5) Keyboard_Info.Debounce_Delay = 5;
-    if (Keyboard_Info.Logo_Mode > 10)     Keyboard_Info.Logo_Mode = 1;
+    if (Keyboard_Info.Logo_Mode > 10)     Keyboard_Info.Logo_Mode = 2;
 
     /*
     if (Keyboard_Info.Logo_Brightness > 255) {
@@ -236,7 +236,7 @@ static inline void Sanitize_Settings(void) {
     }
     */
     
-    if (Keyboard_Info.Logo_Speed > 4)     Keyboard_Info.Logo_Speed = 2;
+    if (Keyboard_Info.Logo_Speed > 4)     Keyboard_Info.Logo_Speed = 1;
 }
 
 static inline void User_Keeb_Reset_Set_Variables(void) {
