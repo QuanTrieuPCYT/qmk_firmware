@@ -22,7 +22,9 @@
 #include "keycodes.h"
 #include "debug.h"
 #include "wait.h"
+#ifdef LAYER_LOCK_ENABLE
 #include "../../keyboards/evoworks/evo80/features/layer_lock.h"
+#endif
 
 #ifdef BACKLIGHT_ENABLE
 #    include "backlight.h"
