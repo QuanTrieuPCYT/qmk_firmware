@@ -214,7 +214,7 @@ static inline void Sanitize_Settings(void) {
     }
     
     if (Keyboard_Info.Ble_Channel > 3) {
-        Keyboard_Info.Ble_Channel = 3;
+        Keyboard_Info.Ble_Channel = 1;
     }
 
     if (Keyboard_Info.Batt_Number > 100) {
