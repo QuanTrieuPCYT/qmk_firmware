@@ -77,7 +77,6 @@
 
 // dynamic macro-related config
 #define DYNAMIC_MACRO_NO_NESTING
-#define DYNAMIC_MACRO_KEEP_ORIGINAL_LAYER_STATE
 
 // rgb matrix-related config
 #define RGB_MATRIX_DEFAULT_MODE RGB_MATRIX_FLOWER_BLOOMING
