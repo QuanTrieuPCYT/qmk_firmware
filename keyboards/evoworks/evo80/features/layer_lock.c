@@ -145,7 +145,7 @@ void layer_lock_all_off(void) {
   layer_and(~locked_layers);
   locked_layers = 0;
   layer_lock_set_user(locked_layers);
-  Key_Fn_Status = false;
+  Key_Fn_Status = false; // actually change Fn keystroke status on layer lock off for all layers
 }
 
 

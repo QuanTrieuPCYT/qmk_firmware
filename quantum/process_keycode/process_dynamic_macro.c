@@ -22,6 +22,7 @@
 #include "keycodes.h"
 #include "debug.h"
 #include "wait.h"
+
 #ifdef LAYER_LOCK_ENABLE
 #include "../../keyboards/evoworks/evo80/features/layer_lock.h"
 #include "../../lib/rdr_lib/rdr_common.h"
@@ -142,10 +143,9 @@ void dynamic_macro_play(keyrecord_t *macro_buffer, keyrecord_t *macro_end, int8_
 
     layer_state_set(saved_layer_state);
 #ifdef LAYER_LOCK_ENABLE
-    locked_layers = saved_locked_layers;       // Restore variable
-    layer_lock_set_user(locked_layers);        // Restore indicator/LEDs
+    locked_layers = saved_locked_layers;
+    layer_lock_set_user(locked_layers);
 
-    // Restore Fn Key Status manually
     if (is_layer_locked(2) || is_layer_locked(3)) {
         Key_Fn_Status = true;
     } else {
