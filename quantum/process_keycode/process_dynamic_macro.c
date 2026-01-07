@@ -24,6 +24,7 @@
 #include "wait.h"
 #ifdef LAYER_LOCK_ENABLE
 #include "../../keyboards/evoworks/evo80/features/layer_lock.h"
+#include "../../lib/rdr_lib/rdr_common.h"
 #endif
 
 #ifdef BACKLIGHT_ENABLE
@@ -111,6 +112,9 @@ void dynamic_macro_play(keyrecord_t *macro_buffer, keyrecord_t *macro_end, int8_
     dprintf("dynamic macro: slot %d playback\n", DYNAMIC_MACRO_CURRENT_SLOT());
 
     layer_state_t saved_layer_state = layer_state;
+#ifdef LAYER_LOCK_ENABLE
+    layer_state_t saved_locked_layers = locked_layers;
+#endif
 
     clear_keyboard();
 #ifdef DYNAMIC_MACRO_KEEP_ORIGINAL_LAYER_STATE
@@ -137,6 +141,17 @@ void dynamic_macro_play(keyrecord_t *macro_buffer, keyrecord_t *macro_end, int8_
     clear_keyboard();
 
     layer_state_set(saved_layer_state);
+#ifdef LAYER_LOCK_ENABLE
+    locked_layers = saved_locked_layers;       // Restore variable
+    layer_lock_set_user(locked_layers);        // Restore indicator/LEDs
+
+    // Restore Fn Key Status manually
+    if (is_layer_locked(2) || is_layer_locked(3)) {
+        Key_Fn_Status = true;
+    } else {
+        Key_Fn_Status = false;
+    }
+#endif
 
     dynamic_macro_play_user(direction);
 }

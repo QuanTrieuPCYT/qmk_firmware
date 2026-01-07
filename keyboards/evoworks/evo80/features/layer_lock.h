@@ -69,6 +69,8 @@
 extern "C" {
 #endif
 
+extern layer_state_t locked_layers;
+
 /**
  * Handler function for Layer Lock.
  *
