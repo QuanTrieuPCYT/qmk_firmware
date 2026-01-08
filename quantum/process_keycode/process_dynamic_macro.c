@@ -305,6 +305,10 @@ bool process_dynamic_macro(uint16_t keycode, keyrecord_t *record) {
         switch (keycode) {
             case QK_DYNAMIC_MACRO_RECORD_START_1:
             case QK_DYNAMIC_MACRO_RECORD_START_2:
+#ifndef DYNAMIC_MACRO_NO_NESTING
+            case QK_DYNAMIC_MACRO_PLAY_1:
+            case QK_DYNAMIC_MACRO_PLAY_2:
+#endif
             case QK_DYNAMIC_MACRO_RECORD_STOP:
                 /* Stop the macro recording. */
                 if (record->event.pressed ^ (keycode != QK_DYNAMIC_MACRO_RECORD_STOP)) { /* Ignore the initial release
