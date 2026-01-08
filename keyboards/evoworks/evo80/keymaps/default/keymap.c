@@ -37,7 +37,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,  KC_BRID,  KC_BRIU,  KC_WHOM,     KC_MAIL,      KC_CALC,  KC_MSEL,   KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_F13,   KC_PSCR,  QK_LLCK,  KC_PAUS,
         MD_USB,  MD_BLE1,  MD_BLE2,  MD_BLE3,     MD_24G,       KC_5,     KC_6,      KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,  KC_INS,   KC_HOME,  KC_PGUP,
         QK_RBT,  LOGO_TOG, KC_W,     KC_E,        KC_R,         KC_T,     KC_Y,      KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,  KC_DEL,   KC_END,   KC_PGDN,
-        KC_CAPS, KC_CAPS,  DM_REC1,  DM_PLY1,     DM_REC2,      DM_PLY2,  KC_G,      KC_H,     KC_J,     KC_K,     QK_LOCK,  KC_SCLN,  KC_QUOT,  KC_K42,   KC_ENT,   KC_ENT,
+        KC_CAPS, KC_CAPS,  DM_PLY1,  DM_PLY2,     DM_REC1,      DM_REC2,  KC_G,      KC_H,     KC_J,     KC_K,     QK_LOCK,  KC_SCLN,  KC_QUOT,  KC_K42,   KC_ENT,   KC_ENT,
         KC_LSFT, KC_K45,   RGB_RTOG, KC_X,        KC_C,         KC_V,     QK_BAT,    KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT,  KC_UP,
         KC_LCTL, QK_WLO,   KC_LALT,                             KC_SPC,                                  QK_SELW,  KC_RGUI,  KC_NO,    KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
     ),
@@ -45,7 +45,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_ESC,  KC_BRID,  KC_BRIU,  KC_MCTL,     MAC_SPT,      IOS_SIRI, LSG(KC_4), KC_MPRV,  KC_MPLY,  KC_MNXT,  KC_MUTE,  KC_VOLD,  KC_VOLU,  KC_F13,   KC_PSCR,  QK_LLCK,  KC_PAUS,
         MD_USB,  MD_BLE1,  MD_BLE2,  MD_BLE3,     MD_24G,       KC_5,     KC_6,      KC_7,     KC_8,     KC_9,     KC_0,     KC_MINS,  KC_EQL,   KC_BSPC,  KC_INS,   KC_HOME,  KC_PGUP,
         QK_RBT,  LOGO_TOG, KC_W,     KC_E,        KC_R,         KC_T,     KC_Y,      KC_U,     KC_I,     KC_O,     KC_P,     KC_LBRC,  KC_RBRC,  KC_BSLS,  KC_DEL,   KC_END,   KC_PGDN,
-        KC_CAPS, KC_CAPS,  DM_REC1,  DM_PLY1,     DM_REC2,      DM_PLY2,  KC_G,      KC_H,     KC_J,     KC_K,     QK_LOCK,  KC_SCLN,  KC_QUOT,  KC_K42,   KC_ENT,   KC_ENT,
+        KC_CAPS, KC_CAPS,  DM_PLY1,  DM_PLY2,     DM_REC1,      DM_REC2,  KC_G,      KC_H,     KC_J,     KC_K,     QK_LOCK,  KC_SCLN,  KC_QUOT,  KC_K42,   KC_ENT,   KC_ENT,
         KC_LSFT, KC_K45,   RGB_RTOG, KC_X,        KC_C,         KC_V,     QK_BAT,    KC_N,     KC_M,     KC_COMM,  KC_DOT,   KC_SLSH,            KC_RSFT,  KC_UP,
         KC_LCTL, QK_WLO,   KC_LALT,                             KC_SPC,                                  QK_SELW,  KC_RGUI,  KC_NO,    KC_RCTL,  KC_LEFT,  KC_DOWN,  KC_RGHT
     )

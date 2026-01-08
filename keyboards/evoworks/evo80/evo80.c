@@ -430,8 +430,15 @@ bool rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     User_Led_Show();
 #ifdef DYNAMIC_MACRO_ENABLE
     switch (dMacro) {
-        case 1: rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180); break;
-        case -1: rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
+        case 1: {
+            rgb_matrix_set_color(get_led_index_for_keycode(DM_REC1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
+            rgb_matrix_set_color(get_led_index_for_keycode(DM_PLY1, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 0, 180, 0);
+            break;
+        }
+        case -1: {
+            rgb_matrix_set_color(get_led_index_for_keycode(DM_REC2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 180, 180, 180);
+            rgb_matrix_set_color(get_led_index_for_keycode(DM_PLY2, (Keyboard_Info.Mac_Win_Mode ? 3 : 2)), 0, 180, 0);
+        }
     }
 #endif
     if (User_Key_Batt_Num_Show) {

@@ -8,7 +8,7 @@ This repo holds the codebase of the firmware of my Evoworks Evo80. Changes have 
 - Caps Lock and Scroll Lock indicators now extend to the RGB Logo strip
 - Implemented Key Lock for hold-locking keys
 - Implemented Layer Lock, with yellow-ish indicator at the Layer Lock key and the RGB Logo strip
-- Implemented Dynamic Macro that allows recording keystrokes on the fly with LED indicator on record buttons, with additional handling logic and respect to Layer Lock when recording and playing macros
+- Implemented Dynamic Macro that allows recording keystrokes on the fly with LED indicator on record & play buttons, with additional handling logic and respect to Layer Lock when recording and playing macros
 - Implemented Word Select, with respect to Mac machines when keyboard is set to Mac mode
 - Battery indicator now also shows from the Q key to the P key (10 LEDs), and also the RGB strip (the strip shows the progress, the circle LED mirrors the state of the Esc key)
 - Enabled link-time optimizations, reworked and refactored code and logic for better performance. Excluded functions that would break when the firmware is compiled with LTO from being inlined
