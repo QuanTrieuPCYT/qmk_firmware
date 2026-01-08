@@ -281,12 +281,16 @@ bool process_dynamic_macro(uint16_t keycode, keyrecord_t *record) {
         if (!record->event.pressed) {
             switch (keycode) {
                 case QK_DYNAMIC_MACRO_RECORD_START_1:
-                    dynamic_macro_record_start(&macro_pointer, macro_buffer, +1);
-                    macro_id = 1;
+                    if (get_mods() & MOD_MASK_SHIFT) {
+                        dynamic_macro_record_start(&macro_pointer, macro_buffer, +1);
+                        macro_id = 1;
+                    }
                     return false;
                 case QK_DYNAMIC_MACRO_RECORD_START_2:
-                    dynamic_macro_record_start(&macro_pointer, r_macro_buffer, -1);
-                    macro_id = 2;
+                    if (get_mods() & MOD_MASK_SHIFT) {
+                        dynamic_macro_record_start(&macro_pointer, r_macro_buffer, -1);
+                        macro_id = 2;
+                    }
                     return false;
                 case QK_DYNAMIC_MACRO_PLAY_1:
                     dynamic_macro_play(macro_buffer, macro_end, +1);
