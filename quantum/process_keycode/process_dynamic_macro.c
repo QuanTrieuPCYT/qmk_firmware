@@ -305,7 +305,7 @@ bool process_dynamic_macro(uint16_t keycode, keyrecord_t *record) {
         switch (keycode) {
             case QK_DYNAMIC_MACRO_RECORD_START_1:
             case QK_DYNAMIC_MACRO_RECORD_START_2:
-#ifndef DYNAMIC_MACRO_NO_NESTING
+#ifdef DYNAMIC_MACRO_NO_NESTING
             case QK_DYNAMIC_MACRO_PLAY_1:
             case QK_DYNAMIC_MACRO_PLAY_2:
 #endif
@@ -317,12 +317,14 @@ bool process_dynamic_macro(uint16_t keycode, keyrecord_t *record) {
                     dynamic_macro_stop_recording();
                 }
                 return false;
+/*
 #ifdef DYNAMIC_MACRO_NO_NESTING
             case QK_DYNAMIC_MACRO_PLAY_1:
             case QK_DYNAMIC_MACRO_PLAY_2:
                 dprintln("dynamic macro: ignoring macro play key while recording");
                 return false;
 #endif
+*/
             default:
                 if (dynamic_macro_valid_key_user(keycode, record)) {
                     /* Store the key in the macro buffer and process it normally. */
